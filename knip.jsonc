@@ -1,0 +1,6 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema-jsonc.json",
+  "ignore": ["src/types/attio/**"],
+  // openapi/commands-plugin.ts augments this package's plugin registry and imports nothing from it.
+  "ignoreDependencies": ["@hey-api/shared"],
+}

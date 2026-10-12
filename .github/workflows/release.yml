@@ -1,0 +1,118 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  # Retries a failed release from its tag.
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify release tag
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [ "$GITHUB_REF" != "refs/tags/v$version" ]; then
+            echo "$GITHUB_REF is not refs/tags/v$version, the tag for the version in package.json."
+            exit 1
+          fi
+          if [ "$(git cat-file -t "$GITHUB_REF")" != tag ]; then
+            echo "$GITHUB_REF is not an annotated tag, so it has no message for the release notes."
+            exit 1
+          fi
+          if ! git merge-base --is-ancestor HEAD origin/main; then
+            echo "The tagged commit is not on main."
+            exit 1
+          fi
+
+  check:
+    needs: validate
+    permissions:
+      contents: read
+    # actionlint rejects the `$/` self-repository form; both forms run the caller's commit.
+    uses: ./.github/workflows/ci.yml # zizmor: ignore[self-repository]
+
+  publish:
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - name: Download tested npm artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: npm-package
+          path: ${{ runner.temp }}/package
+      - name: Inspect publication state
+        id: state
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/release-state.ts "$RUNNER_TEMP"/package/*.tgz
+      - name: Publish tested npm artifact
+        if: steps.state.outputs.npmPublished == 'false'
+        working-directory: ${{ runner.temp }}/package
+        run: npm publish ./*.tgz --provenance --access public
+      # npm scans a new version before serving it, so publishing returns before the version is visible.
+      - name: Wait for npm to serve the tested artifact
+        if: steps.state.outputs.npmPublished == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/release-state.ts "$RUNNER_TEMP"/package/*.tgz --wait
+
+  release:
+    needs: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - name: Download tested npm artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: npm-package
+          path: ${{ runner.temp }}/package
+      - name: Inspect publication state
+        id: state
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/release-state.ts "$RUNNER_TEMP"/package/*.tgz --wait
+      # gh attaches the artifact to a draft and then publishes it, because an immutable release locks its assets once published.
+      - name: Create GitHub Release with tested npm artifact
+        if: steps.state.outputs.releaseExists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: gh release create "$TAG" "$RUNNER_TEMP"/package/*.tgz --verify-tag --notes-from-tag --title "$TAG"

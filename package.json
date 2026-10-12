@@ -1,0 +1,75 @@
+{
+  "name": "@hiro5409/attio-cli",
+  "version": "0.1.0",
+  "description": "A type-safe, agent-friendly CLI for the Attio API.",
+  "keywords": [
+    "attio",
+    "cli",
+    "crm",
+    "typescript"
+  ],
+  "homepage": "https://github.com/Hiro5409/attio-cli#readme",
+  "bugs": {
+    "url": "https://github.com/Hiro5409/attio-cli/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hiro5409/attio-cli.git"
+  },
+  "bin": {
+    "attio-api": "bin/attio-api"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "skills"
+  ],
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "vp pack --logLevel silent && node dist/main.mjs",
+    "build": "vp pack",
+    "test": "vp test",
+    "check": "vp run check:generated && vp check && tsc --noEmit && vp test && knip && vp pack && publint --strict",
+    "lint": "vp lint",
+    "lint:fix": "vp lint --fix",
+    "format": "vp fmt",
+    "format:check": "vp fmt --check",
+    "knip": "knip",
+    "check:generated": "vp run generate-types && git diff --exit-code -- src/types && test -z \"$(git ls-files --others --exclude-standard -- src/types)\"",
+    "api-schema:update": "node scripts/update-api-schema.ts",
+    "api-schema:check": "node scripts/update-api-schema.ts --check",
+    "generate-types": "openapi-ts --file openapi-ts.config.ts",
+    "prepack": "vp pack",
+    "prepublishOnly": "vp run check"
+  },
+  "dependencies": {
+    "gunshi": "1.0.0-rc.1",
+    "ky": "^2.2.0",
+    "valibot": "^1.5.0"
+  },
+  "devDependencies": {
+    "@hey-api/openapi-ts": "0.0.0-next-20260930190945",
+    "@hey-api/shared": "0.0.0-next-20260930190945",
+    "@types/node": "^24.19.1",
+    "knip": "^6.39.0",
+    "msw": "^3.0.2",
+    "publint": "^0.3.25",
+    "typescript": "^7.0.2",
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0",
+    "vite-plus": "1.0.0"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.12.1",
+      "onFail": "download"
+    }
+  },
+  "engines": {
+    "node": ">=24.11.0"
+  }
+}

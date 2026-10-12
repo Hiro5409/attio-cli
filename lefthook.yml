@@ -1,0 +1,22 @@
+# Git hooks run the Lefthook version pinned in mise.toml, whatever PATH Git inherits.
+lefthook: mise exec -- lefthook
+
+pre-commit:
+  piped: true
+  jobs:
+    - name: staged
+      run: mise exec -- vp staged
+    - name: gitleaks
+      run: mise exec -- gitleaks git --pre-commit --staged --no-banner --redact
+
+pre-push:
+  jobs:
+    # A script job runs on every push; a run job is skipped when the push carries no files.
+    - name: audit
+      script: audit.sh
+      runner: sh
+
+post-checkout:
+  jobs:
+    - name: install
+      run: test -d node_modules || mise exec -- pnpm install --frozen-lockfile
