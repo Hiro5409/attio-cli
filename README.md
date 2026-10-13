@@ -35,7 +35,7 @@ attio-api records --help
 attio-api records upsert-a-record --help
 ```
 
-Path and query parameters are options. Operations that take a request body accept it as JSON through `--body`:
+Path and query parameters are options; a boolean one is sent as false with `--no-<option>`. Operations that take a request body accept it as JSON through `--body`:
 
 ```sh
 attio-api objects list-objects
@@ -75,14 +75,14 @@ A successful command prints Attio's response to stdout as JSON and exits with 0.
 | Exit code | `code`                                                             | Meaning                                                                                 |
 | --------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
 | 0         |                                                                    | Successful command or help                                                              |
-| 1         | `API_ERROR`, `NOT_FOUND`, `NETWORK_ERROR`                          | Attio reported a failure or could not be reached                                        |
+| 1         | `API_ERROR`, `NOT_FOUND`, `NETWORK_ERROR`, `UNEXPECTED`            | Attio reported a failure or could not be reached, or the CLI itself failed              |
 | 2         | `INVALID_ARGUMENT`, `BAD_REQUEST`, `AUTH_REQUIRED`, `UNAUTHORIZED` | The command line or the request is invalid, or the token is missing or rejected         |
 | 3         | `FORBIDDEN`                                                        | Attio denied the operation: a missing scope, no access to the resource, or a plan limit |
 | 4         | `RATE_LIMITED`                                                     | Attio is still rate limiting after the retries                                          |
 
 `INVALID_ARGUMENT` comes from the command line itself: an unknown or missing option, or a body that is not JSON. No request reached Attio. The body's content is Attio's to validate, because Attio accepts shapes its schema does not describe, such as a single value where the schema shows a list; a rejected request is `BAD_REQUEST`, with Attio's explanation as the message. Responses are printed as Attio returned them.
 
-Each attempt has a 10-second timeout; a timeout is reported as `NETWORK_ERROR` without a retry. GET, PUT, and DELETE requests are retried up to twice after a rate limit, a server error, or a failed connection. POST and PATCH requests are retried only after a rate limit, because Attio does not process a rate-limited request. A retry waits as long as Attio's `Retry-After` header asks. After `NETWORK_ERROR` or a server error on a write, the write may have taken effect; check before repeating it.
+Each attempt waits up to 10 seconds for Attio's response and up to 10 more for its body; a timeout is reported as `NETWORK_ERROR` without a retry. GET, PUT, and DELETE requests are retried up to twice after a rate limit, a server error, or a failed connection. POST and PATCH requests are retried only after a rate limit, because Attio does not process a rate-limited request. A retry waits as long as Attio's `Retry-After` header asks. After `NETWORK_ERROR` or a server error on a write, the write may have taken effect; check before repeating it.
 
 During 0.x, minor releases may change commands; a command's name follows the summary in Attio's schema, so it changes when Attio renames the operation. Pin the version when depending on exact names.
 

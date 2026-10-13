@@ -10,6 +10,7 @@ import { groups } from "./types/attio/commands.gen.ts";
 import {
   handleGetV2Files,
   handleGetV2Self,
+  handleGetV2Tasks,
   handlePostV2ObjectsByObjectRecordsQuery,
   handlePutV2ObjectsByObjectRecords,
 } from "./types/attio/msw.gen.ts";
@@ -134,12 +135,23 @@ describe("attio-api", () => {
     { argv: ["meta", "identify", "--format", "table"], name: "an unknown option" },
     { argv: ["meta", "identify", "extra"], name: "an unexpected argument" },
     { argv: ["nonexistent"], name: "an unknown command" },
+    { argv: [], name: "no command" },
+    { argv: ["records"], name: "a group without a command" },
   ])("rejects $name as a usage error without calling Attio", async ({ argv }) => {
     const result = await run(argv, { ATTIO_ACCESS_TOKEN: "test-token" });
 
     expect(result.exitCode).toBe(2);
     expect(result.stdout).toBe("");
     expect(JSON.parse(result.stderr)).toMatchObject({ error: { code: "INVALID_ARGUMENT" } });
+  });
+
+  test("reports a failure that is neither Attio's nor the network's as UNEXPECTED", async () => {
+    // A header cannot carry this character, so the request fails before anything is sent.
+    const result = await run(["meta", "identify"], { ATTIO_ACCESS_TOKEN: "…" });
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stdout).toBe("");
+    expect(JSON.parse(result.stderr)).toMatchObject({ error: { code: "UNEXPECTED" } });
   });
 
   test("reports a failed connection separately from an Attio error", async () => {
@@ -184,12 +196,37 @@ describe("attio-api files list-files", () => {
     const url = new URL(request?.url ?? "");
     expect(request?.method).toBe("GET");
     expect(request?.headers.get("authorization")).toBe("Bearer test-token");
+    expect(request?.headers.get("accept")).toBe("application/json");
     expect(url.origin + url.pathname).toBe("https://api.attio.com/v2/files");
     expect(Object.fromEntries(url.searchParams)).toEqual({
       limit: "10",
       object: "companies",
       record_id: "9f8e7d6c-5b4a-4c3d-8e2f-1a0b9c8d7e6f",
     });
+  });
+});
+
+describe("attio-api tasks list-tasks", () => {
+  test.each([
+    { argv: ["--is-completed"], sent: "true" },
+    { argv: ["--no-is-completed"], sent: "false" },
+    { argv: ["--is-completed=false"], sent: "false" },
+    { argv: [], sent: null },
+  ])("sends is_completed=$sent for $argv", async ({ argv, sent }) => {
+    const queries: (string | null)[] = [];
+    server.use(
+      handleGetV2Tasks(({ request }) => {
+        queries.push(new URL(request.url).searchParams.get("is_completed"));
+        return HttpResponse.json({ data: [] });
+      }),
+    );
+
+    const result = await run(["tasks", "list-tasks", ...argv], {
+      ATTIO_ACCESS_TOKEN: "test-token",
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(queries).toEqual([sent]);
   });
 });
 

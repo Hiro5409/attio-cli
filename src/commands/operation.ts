@@ -70,6 +70,8 @@ export function operationCommand(name: string, source: Operation, env: Environme
   for (const option of source.options) {
     args[optionName(option.name)] = {
       description: option.description,
+      // `--no-<option>` sends false, which Attio reads differently from leaving the option out.
+      negatable: option.type === "boolean" || undefined,
       required: option.required || undefined,
       type: ARGUMENT_TYPES[option.type],
     };

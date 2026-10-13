@@ -11,7 +11,9 @@ type Command = ReturnType<typeof define>;
 const rootCommand = define({
   name: "attio-api",
   description: "Agent-friendly access to the Attio API",
-  run: () => 'Run "attio --help" for usage information.',
+  run: () => {
+    throw usageError('No command given. Run "attio-api --help".');
+  },
 });
 
 type Group = { commands: Record<string, Operation>; description: string };
@@ -27,7 +29,9 @@ function commandTree(env: Environment): Record<string, Command> {
     tree[group] = define({
       name: group,
       description,
-      run: () => `Run "attio-api ${group} --help" for usage information.`,
+      run: () => {
+        throw usageError(`No ${group} command given. Run "attio-api ${group} --help".`);
+      },
       subCommands,
     });
   }

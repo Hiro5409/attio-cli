@@ -49,6 +49,10 @@ function summary(description: string | undefined): string {
 /** The command-line option type for a path or query parameter. */
 function optionType(parameter: IR.ParameterObject): string {
   const schema = parameter.schema;
+  // An array's items would otherwise pass for the alternatives of a union.
+  if (schema.type === "array") {
+    throw new Error(`Unsupported array parameter "${parameter.name}".`);
+  }
   // A nullable string arrives as a union of string and null; an enum of strings as an enum.
   const candidates = schema.items?.length ? schema.items : [schema];
   const types = new Set(candidates.map((item) => item.type).filter((type) => type !== "null"));

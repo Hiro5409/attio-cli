@@ -1,4 +1,4 @@
-import ky, { isHTTPError, type RetryOptions } from "ky";
+import ky, { isHTTPError, isNetworkError, isTimeoutError, type RetryOptions } from "ky";
 
 import { CliError, httpError, networkError } from "../errors.ts";
 import { type Client, createClient } from "../types/attio/client/index.ts";
@@ -37,12 +37,13 @@ export function attioClient(env: Environment): Client {
     auth: accessToken,
     baseUrl: "https://api.attio.com",
     fetch: transport,
+    headers: { Accept: "application/json" },
     throwOnError: true,
   });
-  client.interceptors.error.use((error, response) => {
+  client.interceptors.error.use((error) => {
     // Ky raises HTTP failures itself once its retries run out, with Attio's body already parsed.
     if (isHTTPError(error)) return httpError(error.response.status, error.data);
-    return response ? error : networkError(error);
+    return isNetworkError(error) || isTimeoutError(error) ? networkError(error) : error;
   });
   return client;
 }
