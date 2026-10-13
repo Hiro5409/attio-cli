@@ -19,7 +19,7 @@ If unavailable, install with `npm install --global @hiro5409/attio-cli`.
 4. Resolve what a write refers to with read commands first: `objects list-objects`, `lists list-all-lists`, `attributes list-attributes`, `attributes list-select-options`, `attributes list-statuses`. Write with the slugs and IDs they return; a select or status value must already exist as an option.
 5. To create something that may already exist, use the upsert commands with a unique matching attribute, so that repeating the command changes nothing.
 6. Each command returns one page. With `limit` and `offset`, continue until a page comes back short; with a cursor, continue while the response carries a next cursor.
-7. Execute the requested writes only. A delete has no command that reverses it; ask before deleting anything the request did not name.
+7. Before a delete, run the same command with `--dry-run` and check that the request it prints names the target you mean.
 
 A command succeeded when it exits with 0 and prints parseable JSON; check a write's returned values against the requested ones.
 

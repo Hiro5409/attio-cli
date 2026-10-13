@@ -8,6 +8,7 @@ import { main } from "./cli.ts";
 import { server } from "./test/server.ts";
 import { groups } from "./types/attio/commands.gen.ts";
 import {
+  handleDeleteV2ObjectsByObjectRecordsByRecordId,
   handleGetV2Files,
   handleGetV2Self,
   handleGetV2Tasks,
@@ -133,6 +134,10 @@ describe("attio-api meta identify", () => {
 describe("attio-api", () => {
   test.each([
     { argv: ["meta", "identify", "--format", "table"], name: "an unknown option" },
+    {
+      argv: ["meta", "identify", "--dry-run"],
+      name: "--dry-run on a command that deletes nothing",
+    },
     { argv: ["meta", "identify", "extra"], name: "an unexpected argument" },
     { argv: ["nonexistent"], name: "an unknown command" },
     { argv: [], name: "no command" },
@@ -203,6 +208,45 @@ describe("attio-api files list-files", () => {
       object: "companies",
       record_id: "9f8e7d6c-5b4a-4c3d-8e2f-1a0b9c8d7e6f",
     });
+  });
+});
+
+describe("attio-api records delete-a-record", () => {
+  const recordId = "9f8e7d6c-5b4a-4c3d-8e2f-1a0b9c8d7e6f";
+  const argv = ["records", "delete-a-record", "--object", "companies", "--record-id", recordId];
+  const url = `https://api.attio.com/v2/objects/companies/records/${recordId}`;
+
+  function countDeletes() {
+    const urls: string[] = [];
+    server.use(
+      handleDeleteV2ObjectsByObjectRecordsByRecordId(({ request }) => {
+        urls.push(request.url);
+        return HttpResponse.json({});
+      }),
+    );
+    return urls;
+  }
+
+  test("prints the request and sends nothing with --dry-run", async () => {
+    const sent = countDeletes();
+
+    const result = await run([...argv, "--dry-run"], { ATTIO_ACCESS_TOKEN: "test-token" });
+
+    expect(result).toEqual({
+      exitCode: 0,
+      stderr: "",
+      stdout: JSON.stringify({ dry_run: true, method: "DELETE", url }, null, 2),
+    });
+    expect(sent).toEqual([]);
+  });
+
+  test("deletes the record without --dry-run", async () => {
+    const sent = countDeletes();
+
+    const result = await run(argv, { ATTIO_ACCESS_TOKEN: "test-token" });
+
+    expect(result.exitCode).toBe(0);
+    expect(sent).toEqual([url]);
   });
 });
 
@@ -437,7 +481,7 @@ describe("attio-api --help", () => {
 
 describe("every generated command", () => {
   const commands = Object.entries(groups).flatMap(([group, members]) =>
-    Object.keys(members.commands).map((name) => ({ group, name })),
+    Object.entries(members.commands).map(([name, { method }]) => ({ group, method, name })),
   );
 
   test("covers every operation in the schema except the two files operations left out", () => {
@@ -460,5 +504,6 @@ describe("every generated command", () => {
     expect(result.exitCode).toBe(0);
     expect(result.stderr).toBe("");
     expect(result.stdout).toContain(`attio-api ${command.group} ${command.name}`);
+    expect(result.stdout.includes("--dry-run")).toBe(command.method === "DELETE");
   });
 });

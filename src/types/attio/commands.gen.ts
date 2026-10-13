@@ -106,18 +106,21 @@ export const groups = {
         body: "none",
         call: getV2Objects,
         description: "List objects",
+        method: "GET",
         options: [],
       }),
       "create-an-object": operation({
         body: "required",
         call: postV2Objects,
         description: "Create an object",
+        method: "POST",
         options: [],
       }),
       "delete-an-object": operation({
         body: "none",
         call: deleteV2ObjectsByObject,
         description: "Delete an object",
+        method: "DELETE",
         options: [
           {
             description: "A UUID or slug to identify the object.",
@@ -132,6 +135,7 @@ export const groups = {
         body: "none",
         call: getV2ObjectsByObject,
         description: "Get an object",
+        method: "GET",
         options: [
           {
             description: "A UUID or slug to identify the object.",
@@ -146,6 +150,7 @@ export const groups = {
         body: "required",
         call: patchV2ObjectsByObject,
         description: "Update an object",
+        method: "PATCH",
         options: [
           {
             description: "A UUID or slug to identify the object.",
@@ -160,6 +165,7 @@ export const groups = {
         body: "none",
         call: getV2ObjectsByObjectViews,
         description: "List views for object",
+        method: "GET",
         options: [
           {
             description: "A UUID or slug to identify the object.",
@@ -203,6 +209,7 @@ export const groups = {
         body: "none",
         call: getV2Activities,
         description: "List activities",
+        method: "GET",
         options: [
           {
             description:
@@ -226,12 +233,14 @@ export const groups = {
         body: "required",
         call: postV2Activities,
         description: "Create an activity",
+        method: "POST",
         options: [],
       }),
       "delete-an-activity": operation({
         body: "none",
         call: deleteV2ActivitiesByActivity,
         description: "Delete an activity",
+        method: "DELETE",
         options: [
           {
             description: "A UUID or slug to identify the activity.",
@@ -246,6 +255,7 @@ export const groups = {
         body: "none",
         call: getV2ActivitiesByActivity,
         description: "Get an activity",
+        method: "GET",
         options: [
           {
             description: "A UUID or slug to identify the activity.",
@@ -260,6 +270,7 @@ export const groups = {
         body: "required",
         call: patchV2ActivitiesByActivity,
         description: "Update an activity",
+        method: "PATCH",
         options: [
           {
             description: "A UUID or slug to identify the activity.",
@@ -279,6 +290,7 @@ export const groups = {
         body: "required",
         call: postV2ActivitiesByActivityRecordsQuery,
         description: "List activity records",
+        method: "POST",
         options: [
           {
             description: "A UUID or slug to identify the activity.",
@@ -293,6 +305,7 @@ export const groups = {
         body: "required",
         call: postV2ActivitiesByActivityRecords,
         description: "Create an activity record",
+        method: "POST",
         options: [
           {
             description: "A UUID or slug to identify the activity.",
@@ -307,6 +320,7 @@ export const groups = {
         body: "required",
         call: putV2ActivitiesByActivityRecords,
         description: "Upsert an activity record",
+        method: "PUT",
         options: [
           {
             description: "A UUID or slug to identify the activity.",
@@ -329,6 +343,7 @@ export const groups = {
         body: "none",
         call: deleteV2ActivitiesByActivityRecordsByRecordId,
         description: "Delete an activity record",
+        method: "DELETE",
         options: [
           {
             description: "A UUID or slug to identify the activity.",
@@ -350,6 +365,7 @@ export const groups = {
         body: "none",
         call: getV2ActivitiesByActivityRecordsByRecordId,
         description: "Get an activity record",
+        method: "GET",
         options: [
           {
             description: "A UUID or slug to identify the activity.",
@@ -371,6 +387,7 @@ export const groups = {
         body: "required",
         call: patchV2ActivitiesByActivityRecordsByRecordId,
         description: "Update an activity record (append multiselect values)",
+        method: "PATCH",
         options: [
           {
             description: "A UUID or slug to identify the activity.",
@@ -392,6 +409,7 @@ export const groups = {
         body: "required",
         call: putV2ActivitiesByActivityRecordsByRecordId,
         description: "Update an activity record (overwrite multiselect values)",
+        method: "PUT",
         options: [
           {
             description: "A UUID or slug to identify the activity.",
@@ -418,6 +436,7 @@ export const groups = {
         body: "none",
         call: getV2ByTargetByIdentifierAttributes,
         description: "List attributes",
+        method: "GET",
         options: [
           {
             description: "Whether the attributes are on an object or a list.",
@@ -463,6 +482,7 @@ export const groups = {
         body: "required",
         call: postV2ByTargetByIdentifierAttributes,
         description: "Create an attribute",
+        method: "POST",
         options: [
           {
             description: "Whether the attribute is to be created on an object or a list.",
@@ -484,6 +504,7 @@ export const groups = {
         body: "none",
         call: getV2ByTargetByIdentifierAttributesByAttribute,
         description: "Get an attribute",
+        method: "GET",
         options: [
           {
             description: "Whether the attribute is on an object or a list.",
@@ -512,6 +533,7 @@ export const groups = {
         body: "required",
         call: patchV2ByTargetByIdentifierAttributesByAttribute,
         description: "Update an attribute",
+        method: "PATCH",
         options: [
           {
             description: "Whether the attribute is on an object or a list.",
@@ -540,6 +562,7 @@ export const groups = {
         body: "none",
         call: getV2ByTargetByIdentifierAttributesByAttributeOptions,
         description: "List select options",
+        method: "GET",
         options: [
           {
             description: "Whether the attribute is on an object or a list.",
@@ -577,6 +600,7 @@ export const groups = {
         body: "required",
         call: postV2ByTargetByIdentifierAttributesByAttributeOptions,
         description: "Create a select option",
+        method: "POST",
         options: [
           {
             description: "Whether the attribute is on an object or a list.",
@@ -606,6 +630,7 @@ export const groups = {
         body: "required",
         call: patchV2ByTargetByIdentifierAttributesByAttributeOptionsByOption,
         description: "Update a select option",
+        method: "PATCH",
         options: [
           {
             description: "Whether the attribute is on an object or a list.",
@@ -643,6 +668,7 @@ export const groups = {
         body: "none",
         call: getV2ByTargetByIdentifierAttributesByAttributeStatuses,
         description: "List statuses",
+        method: "GET",
         options: [
           {
             description: "Whether the attribute is on an object or a list.",
@@ -680,6 +706,7 @@ export const groups = {
         body: "required",
         call: postV2ByTargetByIdentifierAttributesByAttributeStatuses,
         description: "Create a status",
+        method: "POST",
         options: [
           {
             description: "Whether the attribute is on an object or a list.",
@@ -709,6 +736,7 @@ export const groups = {
         body: "required",
         call: patchV2ByTargetByIdentifierAttributesByAttributeStatusesByStatus,
         description: "Update a status",
+        method: "PATCH",
         options: [
           {
             description: "Whether the attribute is on an object or a list.",
@@ -750,6 +778,7 @@ export const groups = {
         body: "required",
         call: postV2ObjectsByObjectRecordsQuery,
         description: "List records",
+        method: "POST",
         options: [
           {
             description: "A UUID or slug to identify the object to list records for.",
@@ -764,6 +793,7 @@ export const groups = {
         body: "required",
         call: postV2ObjectsByObjectRecords,
         description: "Create a record",
+        method: "POST",
         options: [
           {
             description:
@@ -779,6 +809,7 @@ export const groups = {
         body: "required",
         call: putV2ObjectsByObjectRecords,
         description: "Upsert a record",
+        method: "PUT",
         options: [
           {
             description: "A UUID or slug to identify the object the record should belong to.",
@@ -801,6 +832,7 @@ export const groups = {
         body: "none",
         call: deleteV2ObjectsByObjectRecordsByRecordId,
         description: "Delete a record",
+        method: "DELETE",
         options: [
           {
             description: "The UUID or slug of the object the record belongs to.",
@@ -822,6 +854,7 @@ export const groups = {
         body: "none",
         call: getV2ObjectsByObjectRecordsByRecordId,
         description: "Get a record",
+        method: "GET",
         options: [
           {
             description: "A UUID or slug identifying the object that the record belongs to.",
@@ -843,6 +876,7 @@ export const groups = {
         body: "required",
         call: patchV2ObjectsByObjectRecordsByRecordId,
         description: "Update a record (append multiselect values)",
+        method: "PATCH",
         options: [
           {
             description: "A UUID or slug of the object the record belongs to.",
@@ -864,6 +898,7 @@ export const groups = {
         body: "required",
         call: putV2ObjectsByObjectRecordsByRecordId,
         description: "Update a record (overwrite multiselect values)",
+        method: "PUT",
         options: [
           {
             description: "A UUID or slug of the object the record belongs to.",
@@ -885,6 +920,7 @@ export const groups = {
         body: "required",
         call: postV2ObjectsByObjectRecordsMerge,
         description: "Merge two records",
+        method: "POST",
         options: [
           {
             description: "A UUID or slug of the object both records belong to.",
@@ -899,6 +935,7 @@ export const groups = {
         body: "none",
         call: getV2ObjectsByObjectRecordsByRecordIdAttributesByAttributeValues,
         description: "List record attribute values",
+        method: "GET",
         options: [
           {
             description: "A UUID or slug to identify the object the record belongs to.",
@@ -951,6 +988,7 @@ export const groups = {
         body: "required",
         call: putV2ObjectsByObjectRecordsByRecordIdAttributesByAttributeValues,
         description: "Write record attribute values",
+        method: "PUT",
         options: [
           {
             description: "A UUID or slug to identify the object the record belongs to.",
@@ -979,6 +1017,7 @@ export const groups = {
         body: "none",
         call: getV2ObjectsByObjectRecordsByRecordIdEntries,
         description: "List record entries",
+        method: "GET",
         options: [
           {
             description: "A UUID or slug identifying the object that the record belongs to.",
@@ -1016,6 +1055,7 @@ export const groups = {
         body: "required",
         call: postV2ObjectsRecordsSearch,
         description: "Search records",
+        method: "POST",
         options: [],
       }),
     },
@@ -1027,6 +1067,7 @@ export const groups = {
         body: "required",
         call: postV2Sql,
         description: "Query SQL",
+        method: "POST",
         options: [],
       }),
     },
@@ -1038,18 +1079,21 @@ export const groups = {
         body: "none",
         call: getV2Lists,
         description: "List all lists",
+        method: "GET",
         options: [],
       }),
       "create-a-list": operation({
         body: "required",
         call: postV2Lists,
         description: "Create a list",
+        method: "POST",
         options: [],
       }),
       "get-a-list": operation({
         body: "none",
         call: getV2ListsByList,
         description: "Get a list",
+        method: "GET",
         options: [
           {
             description: "A UUID or slug to identify the list.",
@@ -1064,6 +1108,7 @@ export const groups = {
         body: "required",
         call: patchV2ListsByList,
         description: "Update a list",
+        method: "PATCH",
         options: [
           {
             description: "A UUID or slug to identify the list to update.",
@@ -1078,6 +1123,7 @@ export const groups = {
         body: "none",
         call: getV2ListsByListViews,
         description: "List views for list",
+        method: "GET",
         options: [
           {
             description: "A UUID or slug to identify the list.",
@@ -1121,6 +1167,7 @@ export const groups = {
         body: "required",
         call: postV2ListsByListEntriesQuery,
         description: "List entries",
+        method: "POST",
         options: [
           {
             description: "A UUID or slug to identify the list to retrieve entries from.",
@@ -1135,6 +1182,7 @@ export const groups = {
         body: "required",
         call: postV2ListsByListEntries,
         description: "Create an entry (add record to list)",
+        method: "POST",
         options: [
           {
             description:
@@ -1150,6 +1198,7 @@ export const groups = {
         body: "required",
         call: putV2ListsByListEntries,
         description: "Upsert a list entry by parent",
+        method: "PUT",
         options: [
           {
             description: "A UUID or slug of the list the list entry belongs to.",
@@ -1164,6 +1213,7 @@ export const groups = {
         body: "none",
         call: deleteV2ListsByListEntriesByEntryId,
         description: "Delete a list entry",
+        method: "DELETE",
         options: [
           {
             description: "A UUID or slug identifying the list the entry is in.",
@@ -1185,6 +1235,7 @@ export const groups = {
         body: "none",
         call: getV2ListsByListEntriesByEntryId,
         description: "Get a list entry",
+        method: "GET",
         options: [
           {
             description: "A UUID or slug identifying the list the entry is in.",
@@ -1206,6 +1257,7 @@ export const groups = {
         body: "required",
         call: patchV2ListsByListEntriesByEntryId,
         description: "Update a list entry (append multiselect values)",
+        method: "PATCH",
         options: [
           {
             description: "A UUID or slug of the list the list entry belongs to.",
@@ -1227,6 +1279,7 @@ export const groups = {
         body: "required",
         call: putV2ListsByListEntriesByEntryId,
         description: "Update a list entry (overwrite multiselect values)",
+        method: "PUT",
         options: [
           {
             description: "A UUID or slug of the list the list entry belongs to.",
@@ -1248,6 +1301,7 @@ export const groups = {
         body: "none",
         call: getV2ListsByListEntriesByEntryIdAttributesByAttributeValues,
         description: "List attribute values for a list entry",
+        method: "GET",
         options: [
           {
             description: "A UUID or slug identifying the list the entry is in.",
@@ -1300,6 +1354,7 @@ export const groups = {
         body: "required",
         call: putV2ListsByListEntriesByEntryIdAttributesByAttributeValues,
         description: "Write list entry attribute values",
+        method: "PUT",
         options: [
           {
             description: "A UUID or slug identifying the list the entry is in.",
@@ -1333,12 +1388,14 @@ export const groups = {
         body: "none",
         call: getV2WorkspaceMembers,
         description: "List workspace members",
+        method: "GET",
         options: [],
       }),
       "get-a-workspace-member": operation({
         body: "none",
         call: getV2WorkspaceMembersByWorkspaceMemberId,
         description: "Get a workspace member",
+        method: "GET",
         options: [
           {
             description: "A UUID to identify the workspace member.",
@@ -1358,6 +1415,7 @@ export const groups = {
         body: "none",
         call: getV2Notes,
         description: "List notes",
+        method: "GET",
         options: [
           {
             description:
@@ -1395,12 +1453,14 @@ export const groups = {
         body: "required",
         call: postV2Notes,
         description: "Create a note",
+        method: "POST",
         options: [],
       }),
       "delete-a-note": operation({
         body: "none",
         call: deleteV2NotesByNoteId,
         description: "Delete a note",
+        method: "DELETE",
         options: [
           {
             description: "A UUID which identifies the note to delete.",
@@ -1415,6 +1475,7 @@ export const groups = {
         body: "none",
         call: getV2NotesByNoteId,
         description: "Get a note",
+        method: "GET",
         options: [
           {
             description: "A UUID which identifies the note.",
@@ -1429,6 +1490,7 @@ export const groups = {
         body: "required",
         call: patchV2NotesByNoteId,
         description: "Update a note",
+        method: "PATCH",
         options: [
           {
             description: "A UUID which identifies the note to update.",
@@ -1448,6 +1510,7 @@ export const groups = {
         body: "none",
         call: getV2Tasks,
         description: "List tasks",
+        method: "GET",
         options: [
           {
             description:
@@ -1511,12 +1574,14 @@ export const groups = {
         body: "required",
         call: postV2Tasks,
         description: "Create a task",
+        method: "POST",
         options: [],
       }),
       "delete-a-task": operation({
         body: "none",
         call: deleteV2TasksByTaskId,
         description: "Delete a task",
+        method: "DELETE",
         options: [
           {
             description: "The ID of the task to delete.",
@@ -1531,6 +1596,7 @@ export const groups = {
         body: "none",
         call: getV2TasksByTaskId,
         description: "Get a task",
+        method: "GET",
         options: [
           {
             description: "The ID of the task.",
@@ -1545,6 +1611,7 @@ export const groups = {
         body: "required",
         call: patchV2TasksByTaskId,
         description: "Update a task",
+        method: "PATCH",
         options: [
           {
             description: "The ID of the task to update.",
@@ -1565,6 +1632,7 @@ export const groups = {
         body: "none",
         call: getV2Threads,
         description: "List threads",
+        method: "GET",
         options: [
           {
             description:
@@ -1620,6 +1688,7 @@ export const groups = {
         body: "none",
         call: getV2ThreadsByThreadId,
         description: "Get a thread and its comments",
+        method: "GET",
         options: [
           {
             description: "A UUID which identifies the thread.",
@@ -1662,12 +1731,14 @@ export const groups = {
         body: "required",
         call: postV2Comments,
         description: "Create a comment",
+        method: "POST",
         options: [],
       }),
       "delete-a-comment": operation({
         body: "none",
         call: deleteV2CommentsByCommentId,
         description: "Delete a comment",
+        method: "DELETE",
         options: [
           {
             description: "The ID of the comment to delete.",
@@ -1682,6 +1753,7 @@ export const groups = {
         body: "none",
         call: getV2CommentsByCommentId,
         description: "Get a comment",
+        method: "GET",
         options: [
           {
             description: "A UUID which identifies the comment.",
@@ -1701,6 +1773,7 @@ export const groups = {
         body: "none",
         call: getV2Emails,
         description: "List emails",
+        method: "GET",
         options: [
           {
             description:
@@ -1785,6 +1858,7 @@ export const groups = {
         body: "required",
         call: postV2SequencesUnsubscribedEmails,
         description: "Add emails to the unsubscribe list",
+        method: "POST",
         options: [],
       }),
     },
@@ -1796,6 +1870,7 @@ export const groups = {
         body: "none",
         call: getV2Meetings,
         description: "List meetings",
+        method: "GET",
         options: [
           {
             description:
@@ -1874,12 +1949,14 @@ export const groups = {
         body: "required",
         call: postV2Meetings,
         description: "Create a meeting",
+        method: "POST",
         options: [],
       }),
       "delete-a-meeting": operation({
         body: "none",
         call: deleteV2MeetingsByMeetingId,
         description: "Delete a meeting",
+        method: "DELETE",
         options: [
           {
             description: "A UUID which identifies the meeting to delete.",
@@ -1894,6 +1971,7 @@ export const groups = {
         body: "none",
         call: getV2MeetingsByMeetingId,
         description: "Get a meeting",
+        method: "GET",
         options: [
           {
             description: "A UUID which identifies the meeting.",
@@ -1908,6 +1986,7 @@ export const groups = {
         body: "required",
         call: patchV2MeetingsByMeetingId,
         description: "Update a meeting (append linked records)",
+        method: "PATCH",
         options: [
           {
             description: "A UUID which identifies the meeting to update.",
@@ -1922,6 +2001,7 @@ export const groups = {
         body: "required",
         call: putV2MeetingsByMeetingId,
         description: "Update a meeting (overwrite linked records)",
+        method: "PUT",
         options: [
           {
             description: "A UUID which identifies the meeting to update.",
@@ -1942,6 +2022,7 @@ export const groups = {
         body: "none",
         call: getV2MeetingsByMeetingIdCallRecordings,
         description: "List call recordings",
+        method: "GET",
         options: [
           {
             description: "The ID of the meeting to list call recordings for.",
@@ -1972,6 +2053,7 @@ export const groups = {
         body: "required",
         call: postV2MeetingsByMeetingIdCallRecordings,
         description: "Create call recording",
+        method: "POST",
         options: [
           {
             description: "The ID of the meeting this recording belongs to.",
@@ -1986,6 +2068,7 @@ export const groups = {
         body: "none",
         call: deleteV2MeetingsByMeetingIdCallRecordingsByCallRecordingId,
         description: "Delete call recording",
+        method: "DELETE",
         options: [
           {
             description: "The ID of the meeting this call recording belongs to.",
@@ -2007,6 +2090,7 @@ export const groups = {
         body: "none",
         call: getV2MeetingsByMeetingIdCallRecordingsByCallRecordingId,
         description: "Get call recording",
+        method: "GET",
         options: [
           {
             description: "The ID of the meeting this recording belongs to.",
@@ -2034,6 +2118,7 @@ export const groups = {
         body: "none",
         call: getV2MeetingsByMeetingIdCallRecordingsByCallRecordingIdTranscript,
         description: "Deprecated: Get call transcript",
+        method: "GET",
         options: [
           {
             description: "The ID of the meeting.",
@@ -2069,6 +2154,7 @@ export const groups = {
         body: "none",
         call: getV2Files,
         description: "List files",
+        method: "GET",
         options: [
           {
             description: "The object slug or ID.",
@@ -2121,12 +2207,14 @@ export const groups = {
         body: "required",
         call: postV2Files,
         description: "Create a folder",
+        method: "POST",
         options: [],
       }),
       "delete-a-file": operation({
         body: "none",
         call: deleteV2FilesByFileId,
         description: "Delete a file",
+        method: "DELETE",
         options: [
           {
             description: "A UUID which identifies the file to delete.",
@@ -2141,6 +2229,7 @@ export const groups = {
         body: "none",
         call: getV2FilesByFileId,
         description: "Get a file",
+        method: "GET",
         options: [
           {
             description: "A UUID which identifies the file entry.",
@@ -2161,6 +2250,7 @@ export const groups = {
         body: "none",
         call: getV2Webhooks,
         description: "List webhooks",
+        method: "GET",
         options: [
           {
             description:
@@ -2184,12 +2274,14 @@ export const groups = {
         body: "required",
         call: postV2Webhooks,
         description: "Create a webhook",
+        method: "POST",
         options: [],
       }),
       "delete-a-webhook": operation({
         body: "none",
         call: deleteV2WebhooksByWebhookId,
         description: "Delete a webhook",
+        method: "DELETE",
         options: [
           {
             description: "A UUID identifying the webhook to delete.",
@@ -2204,6 +2296,7 @@ export const groups = {
         body: "none",
         call: getV2WebhooksByWebhookId,
         description: "Get a webhook",
+        method: "GET",
         options: [
           {
             description: "A UUID which identifies the webhook.",
@@ -2218,6 +2311,7 @@ export const groups = {
         body: "required",
         call: patchV2WebhooksByWebhookId,
         description: "Update a webhook",
+        method: "PATCH",
         options: [
           {
             description: "A UUID which identifies the webhook.",
@@ -2238,6 +2332,7 @@ export const groups = {
         body: "none",
         call: getV2Self,
         description: "Identify",
+        method: "GET",
         options: [],
       }),
     },

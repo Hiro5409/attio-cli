@@ -29,7 +29,7 @@ const TaggedSpec = v.object({
 });
 
 const OPTION_TYPES = new Set(["boolean", "integer", "string"]);
-const RESERVED_OPTIONS = new Set(["body", "help", "version"]);
+const RESERVED_OPTIONS = new Set(["body", "dry_run", "help", "version"]);
 
 /** "Call recordings" becomes "call-recordings", the form Attio's documentation uses in its URLs. */
 function kebab(text: string): string {
@@ -115,6 +115,7 @@ const handler: CommandsPlugin["Handler"] = ({ plugin }) => {
         )
         .prop("call", reference({ category: "sdk" }))
         .prop("description", $.literal(source.summary))
+        .prop("method", $.literal(source.method.toUpperCase()))
         .prop(
           "options",
           $.array(

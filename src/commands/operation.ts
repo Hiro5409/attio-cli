@@ -15,11 +15,13 @@ type OperationOption = {
 type OperationDetails = {
   body: "none" | "optional" | "required";
   description: string;
+  method: string;
   options: readonly OperationOption[];
 };
 
 type OperationInput = {
   body?: unknown;
+  fetch?: typeof fetch;
   path?: Record<string, unknown>;
   query?: Record<string, unknown>;
 };
@@ -56,6 +58,12 @@ function optionName(parameter: string): string {
   return parameter.replaceAll("_", "-");
 }
 
+/** Answers with the request it was given instead of sending it. */
+const preview: typeof fetch = (...input) => {
+  const { method, url } = new Request(...input);
+  return Promise.resolve(Response.json({ dry_run: true, method, url }));
+};
+
 function parseBody(text: string): unknown {
   try {
     return JSON.parse(text);
@@ -84,6 +92,10 @@ export function operationCommand(name: string, source: Operation, env: Environme
     };
   }
 
+  if (source.method === "DELETE") {
+    args["dry-run"] = { description: "Print the request without sending it", type: "boolean" };
+  }
+
   return define({
     name,
     description: source.description,
@@ -96,6 +108,7 @@ export function operationCommand(name: string, source: Operation, env: Environme
         if (value !== undefined) (input[option.in] ??= {})[option.name] = value;
       }
       if (typeof values.body === "string") input.body = parseBody(values.body);
+      if (values["dry-run"]) input.fetch = preview;
       return JSON.stringify(await source.run(attioClient(env), input), null, 2);
     },
   });

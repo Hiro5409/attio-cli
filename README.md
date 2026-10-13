@@ -52,6 +52,12 @@ attio-api notes create-a-note --body "$(cat note.json)"
 
 The body is the request body Attio documents for the operation, unchanged. Each command performs one operation and prints its response; to read a further page, pass the `offset` or `cursor` the operation documents.
 
+A delete command takes `--dry-run`, which prints the request and sends nothing:
+
+```sh
+attio-api records delete-a-record --object companies --record-id <record-id> --dry-run
+```
+
 Two operations have no command: uploading a file, which takes a multipart body, and downloading a file, which answers with a redirect.
 
 ## Output and failures
