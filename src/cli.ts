@@ -24,7 +24,7 @@ function commandTree(env: Environment): Record<string, Command> {
   for (const [group, { commands, description }] of Object.entries<Group>(groups)) {
     const subCommands: Record<string, Command> = {};
     for (const [name, source] of Object.entries(commands)) {
-      subCommands[name] = operationCommand(name, source, env);
+      subCommands[name] = operationCommand(group, name, source, env);
     }
     tree[group] = define({
       name: group,

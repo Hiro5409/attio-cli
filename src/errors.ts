@@ -56,12 +56,21 @@ const HTTP_FAILURES: Record<number, Pick<CliErrorOptions, "code" | "exitCode" | 
   429: { code: "RATE_LIMITED", exitCode: 4, hint: "Wait before running the command again." },
 };
 
+/** A server failure leaves open whether Attio carried the request out. */
+function serverFailureHint(status: number): string | undefined {
+  return status >= 500 ? "A write may have reached Attio, so check before retrying." : undefined;
+}
+
 /** Turns an HTTP failure and the body Attio sent with it into a CLI error. */
 export function httpError(status: number, body: unknown): CliError {
   const parsed = v.safeParse(AttioErrorBody, body);
   const { code, message, type } = parsed.success ? parsed.output : {};
   return new CliError(message || `Attio returned HTTP ${status}.`, {
-    ...(HTTP_FAILURES[status] ?? { code: "API_ERROR", exitCode: 1 }),
+    ...(HTTP_FAILURES[status] ?? {
+      code: "API_ERROR",
+      exitCode: 1,
+      hint: serverFailureHint(status),
+    }),
     attio: { code, type },
     status,
   });

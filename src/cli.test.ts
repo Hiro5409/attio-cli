@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 
-import { HttpResponse } from "msw";
+import { http, HttpResponse } from "msw";
 import * as v from "valibot";
 import { describe, expect, test, vi } from "vite-plus/test";
 
@@ -91,6 +91,7 @@ describe("attio-api meta identify", () => {
     { code: "FORBIDDEN", exitCode: 3, status: 403 },
     { code: "NOT_FOUND", exitCode: 1, status: 404 },
     { code: "RATE_LIMITED", exitCode: 4, status: 429 },
+    { code: "API_ERROR", exitCode: 1, status: 409 },
     { code: "API_ERROR", exitCode: 1, status: 500 },
   ])("reports HTTP $status from Attio as $code", async ({ code, exitCode, status }) => {
     server.use(
@@ -119,6 +120,17 @@ describe("attio-api meta identify", () => {
         status,
       },
     });
+  });
+
+  test.each([
+    { hinted: false, status: 409 },
+    { hinted: true, status: 500 },
+  ])("warns that a write may have been processed after HTTP $status: $hinted", async (c) => {
+    server.use(handleGetV2Self(() => HttpResponse.json({}, { status: c.status })));
+
+    const result = await run(["meta", "identify"], { ATTIO_ACCESS_TOKEN: "test-token" });
+
+    expect("hint" in JSON.parse(result.stderr).error).toBe(c.hinted);
   });
 
   test("prints a response that departs from the published schema as Attio returned it", async () => {
@@ -479,9 +491,32 @@ describe("attio-api --help", () => {
   });
 });
 
+describe("attio-api records upsert-a-record --help", () => {
+  test("links the page of Attio's API reference that documents the body", async () => {
+    const result = await run(["records", "upsert-a-record", "--help"]);
+
+    expect(result.stdout).toContain(
+      "https://docs.attio.com/rest-api/endpoint-reference/records/upsert-a-record",
+    );
+  });
+
+  test("shows an example built from the samples in Attio's schema", async () => {
+    const result = await run(["records", "upsert-a-record", "--help"]);
+
+    expect(result.stdout).toContain(
+      `attio-api records upsert-a-record --object people --matching-attribute 41252299-f8c7-4b5e-99c9-4ff8321d2f96 --body '{"data":{"values":{`,
+    );
+  });
+});
+
 describe("every generated command", () => {
   const commands = Object.entries(groups).flatMap(([group, members]) =>
-    Object.entries(members.commands).map(([name, { method }]) => ({ group, method, name })),
+    Object.entries(members.commands).map(([name, { example, method }]) => ({
+      example,
+      group,
+      method,
+      name,
+    })),
   );
 
   test("covers every operation in the schema except the two files operations left out", () => {
@@ -505,5 +540,15 @@ describe("every generated command", () => {
     expect(result.stderr).toBe("");
     expect(result.stdout).toContain(`attio-api ${command.group} ${command.name}`);
     expect(result.stdout.includes("--dry-run")).toBe(command.method === "DELETE");
+  });
+
+  test.each(commands)("attio-api $group $name accepts its own example", async (command) => {
+    server.use(http.all("https://api.attio.com/*", () => HttpResponse.json({})));
+
+    const result = await run([command.group, command.name, ...command.example], {
+      ATTIO_ACCESS_TOKEN: "test-token",
+    });
+
+    expect(result).toEqual({ exitCode: 0, stderr: "", stdout: "{}" });
   });
 });

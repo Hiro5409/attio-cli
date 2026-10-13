@@ -5,6 +5,7 @@ import {
   type IR,
   type Plugin,
 } from "@hey-api/openapi-ts";
+import { sample } from "openapi-sampler";
 import * as v from "valibot";
 
 type Options = {
@@ -24,7 +25,33 @@ declare module "@hey-api/shared" {
   }
 }
 
-const TaggedSpec = v.object({
+const BodySchema = v.custom<Parameters<typeof sample>[0]>(
+  (input) => typeof input === "object" && input !== null,
+);
+
+/** What the generator reads from the schema itself; the rest is kept for resolving references. */
+const Spec = v.looseObject({
+  paths: v.record(
+    v.string(),
+    v.record(
+      v.string(),
+      v.object({
+        parameters: v.optional(
+          v.array(
+            v.object({
+              name: v.string(),
+              schema: v.optional(v.object({ example: v.optional(v.unknown()) })),
+            }),
+          ),
+        ),
+        requestBody: v.optional(
+          v.object({
+            content: v.object({ "application/json": v.optional(v.object({ schema: BodySchema })) }),
+          }),
+        ),
+      }),
+    ),
+  ),
   tags: v.optional(v.array(v.object({ description: v.optional(v.string()), name: v.string() }))),
 });
 
@@ -69,6 +96,15 @@ const handler: CommandsPlugin["Handler"] = ({ plugin }) => {
   const operation = plugin.symbolFactory.register("operation", {
     external: "../../commands/operation.ts",
   });
+  const spec = v.parse(Spec, plugin.context.spec);
+  const documented = new Map(
+    Object.entries(spec.paths).flatMap(([path, item]) =>
+      Object.entries(item).map(([method, details]): [string, typeof details] => [
+        `${method.toUpperCase()} ${path}`,
+        details,
+      ]),
+    ),
+  );
   const excluded = new Set(Object.keys(plugin.config.exclude));
   const groups = new Map<string, Map<string, ReturnType<typeof $.object>>>();
 
@@ -105,6 +141,21 @@ const handler: CommandsPlugin["Handler"] = ({ plugin }) => {
       throw new Error(`${key} has parameters that cannot become options: ${names.join(", ")}`);
     }
 
+    // The arguments of one run, built from the sample values Attio's schema gives.
+    const details = documented.get(key);
+    if (!details) throw new Error(`${key} is missing from the schema's paths.`);
+    const samples = new Map(details.parameters?.map((item) => [item.name, item.schema?.example]));
+    const example = parameters
+      .filter(({ parameter }) => parameter.required)
+      .flatMap(({ parameter }) => [
+        `--${parameter.name.replaceAll("_", "-")}`,
+        String(samples.get(parameter.name) ?? `<${parameter.name}>`),
+      ]);
+    const body = details.requestBody?.content["application/json"]?.schema;
+    if (body) {
+      example.push("--body", JSON.stringify(sample(body, { skipReadOnly: true }, spec)));
+    }
+
     group.set(
       name,
       $.object()
@@ -115,6 +166,7 @@ const handler: CommandsPlugin["Handler"] = ({ plugin }) => {
         )
         .prop("call", reference({ category: "sdk" }))
         .prop("description", $.literal(source.summary))
+        .prop("example", $.array(...example.map((item) => $.literal(item))))
         .prop("method", $.literal(source.method.toUpperCase()))
         .prop(
           "options",
@@ -139,7 +191,7 @@ const handler: CommandsPlugin["Handler"] = ({ plugin }) => {
     throw new Error(`Excluded operations the schema does not have: ${[...excluded].join(", ")}`);
   }
 
-  const { tags = [] } = v.parse(TaggedSpec, plugin.context.spec);
+  const { tags = [] } = spec;
   const descriptions = new Map(tags.map((tag) => [kebab(tag.name), summary(tag.description)]));
   const commandGroups = $.object().pretty();
   for (const [group, members] of groups) {

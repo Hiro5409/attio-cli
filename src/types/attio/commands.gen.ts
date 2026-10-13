@@ -106,6 +106,7 @@ export const groups = {
         body: "none",
         call: getV2Objects,
         description: "List objects",
+        example: [],
         method: "GET",
         options: [],
       }),
@@ -113,6 +114,10 @@ export const groups = {
         body: "required",
         call: postV2Objects,
         description: "Create an object",
+        example: [
+          "--body",
+          '{"data":{"api_slug":"people","singular_noun":"Person","plural_noun":"People"}}',
+        ],
         method: "POST",
         options: [],
       }),
@@ -120,6 +125,7 @@ export const groups = {
         body: "none",
         call: deleteV2ObjectsByObject,
         description: "Delete an object",
+        example: ["--object", "people"],
         method: "DELETE",
         options: [
           {
@@ -135,6 +141,7 @@ export const groups = {
         body: "none",
         call: getV2ObjectsByObject,
         description: "Get an object",
+        example: ["--object", "people"],
         method: "GET",
         options: [
           {
@@ -150,6 +157,12 @@ export const groups = {
         body: "required",
         call: patchV2ObjectsByObject,
         description: "Update an object",
+        example: [
+          "--object",
+          "people",
+          "--body",
+          '{"data":{"api_slug":"people","singular_noun":"Person","plural_noun":"People"}}',
+        ],
         method: "PATCH",
         options: [
           {
@@ -165,6 +178,7 @@ export const groups = {
         body: "none",
         call: getV2ObjectsByObjectViews,
         description: "List views for object",
+        example: ["--object", "people"],
         method: "GET",
         options: [
           {
@@ -209,6 +223,7 @@ export const groups = {
         body: "none",
         call: getV2Activities,
         description: "List activities",
+        example: [],
         method: "GET",
         options: [
           {
@@ -233,6 +248,10 @@ export const groups = {
         body: "required",
         call: postV2Activities,
         description: "Create an activity",
+        example: [
+          "--body",
+          '{"data":{"api_slug":"site_visits","singular_noun":"Site visit","plural_noun":"Site visits","extends":"interactions"}}',
+        ],
         method: "POST",
         options: [],
       }),
@@ -240,6 +259,7 @@ export const groups = {
         body: "none",
         call: deleteV2ActivitiesByActivity,
         description: "Delete an activity",
+        example: ["--activity", "phone_calls"],
         method: "DELETE",
         options: [
           {
@@ -255,6 +275,7 @@ export const groups = {
         body: "none",
         call: getV2ActivitiesByActivity,
         description: "Get an activity",
+        example: ["--activity", "phone_calls"],
         method: "GET",
         options: [
           {
@@ -270,6 +291,12 @@ export const groups = {
         body: "required",
         call: patchV2ActivitiesByActivity,
         description: "Update an activity",
+        example: [
+          "--activity",
+          "phone_calls",
+          "--body",
+          '{"data":{"api_slug":"site_visits","singular_noun":"Site visit","plural_noun":"Site visits"}}',
+        ],
         method: "PATCH",
         options: [
           {
@@ -290,6 +317,12 @@ export const groups = {
         body: "required",
         call: postV2ActivitiesByActivityRecordsQuery,
         description: "List activity records",
+        example: [
+          "--activity",
+          "phone_calls",
+          "--body",
+          '{"filter":{"name":"Ada Lovelace"},"sorts":[{"direction":"asc","attribute":"name","field":"last_name"}],"limit":500,"offset":0}',
+        ],
         method: "POST",
         options: [
           {
@@ -305,6 +338,12 @@ export const groups = {
         body: "required",
         call: postV2ActivitiesByActivityRecords,
         description: "Create an activity record",
+        example: [
+          "--activity",
+          "phone_calls",
+          "--body",
+          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+        ],
         method: "POST",
         options: [
           {
@@ -320,6 +359,14 @@ export const groups = {
         body: "required",
         call: putV2ActivitiesByActivityRecords,
         description: "Upsert an activity record",
+        example: [
+          "--activity",
+          "phone_calls",
+          "--matching-attribute",
+          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
+          "--body",
+          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+        ],
         method: "PUT",
         options: [
           {
@@ -343,6 +390,12 @@ export const groups = {
         body: "none",
         call: deleteV2ActivitiesByActivityRecordsByRecordId,
         description: "Delete an activity record",
+        example: [
+          "--activity",
+          "phone_calls",
+          "--record-id",
+          "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26",
+        ],
         method: "DELETE",
         options: [
           {
@@ -365,6 +418,12 @@ export const groups = {
         body: "none",
         call: getV2ActivitiesByActivityRecordsByRecordId,
         description: "Get an activity record",
+        example: [
+          "--activity",
+          "phone_calls",
+          "--record-id",
+          "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26",
+        ],
         method: "GET",
         options: [
           {
@@ -387,6 +446,14 @@ export const groups = {
         body: "required",
         call: patchV2ActivitiesByActivityRecordsByRecordId,
         description: "Update an activity record (append multiselect values)",
+        example: [
+          "--activity",
+          "phone_calls",
+          "--record-id",
+          "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26",
+          "--body",
+          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+        ],
         method: "PATCH",
         options: [
           {
@@ -409,6 +476,14 @@ export const groups = {
         body: "required",
         call: putV2ActivitiesByActivityRecordsByRecordId,
         description: "Update an activity record (overwrite multiselect values)",
+        example: [
+          "--activity",
+          "phone_calls",
+          "--record-id",
+          "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26",
+          "--body",
+          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+        ],
         method: "PUT",
         options: [
           {
@@ -436,6 +511,7 @@ export const groups = {
         body: "none",
         call: getV2ByTargetByIdentifierAttributes,
         description: "List attributes",
+        example: ["--target", "lists", "--identifier", "33ebdbe9-e529-47c9-b894-0ba25e9c15c0"],
         method: "GET",
         options: [
           {
@@ -482,6 +558,14 @@ export const groups = {
         body: "required",
         call: postV2ByTargetByIdentifierAttributes,
         description: "Create an attribute",
+        example: [
+          "--target",
+          "lists",
+          "--identifier",
+          "97052eb9-e65e-443f-a297-f2d9a4a7f795",
+          "--body",
+          '{"data":{"title":"Your Attribute","description":"Lorem ipsum","api_slug":"my_attribute","type":"text","is_required":true,"is_unique":true,"is_multiselect":true,"default_value":{"type":"static","template":[{"value":5}]},"relationship":{"object":"companies","title":"Team members","api_slug":"team_members","is_multiselect":false},"config":{"currency":{"default_currency_code":"USD","display_type":"symbol"},"record_reference":{"allowed_objects":["people"]}}}}',
+        ],
         method: "POST",
         options: [
           {
@@ -504,6 +588,14 @@ export const groups = {
         body: "none",
         call: getV2ByTargetByIdentifierAttributesByAttribute,
         description: "Get an attribute",
+        example: [
+          "--target",
+          "lists",
+          "--identifier",
+          "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
+          "--attribute",
+          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
+        ],
         method: "GET",
         options: [
           {
@@ -533,6 +625,16 @@ export const groups = {
         body: "required",
         call: patchV2ByTargetByIdentifierAttributesByAttribute,
         description: "Update an attribute",
+        example: [
+          "--target",
+          "lists",
+          "--identifier",
+          "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
+          "--attribute",
+          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
+          "--body",
+          '{"data":{"title":"Your Attribute","description":"Lorem ipsum","api_slug":"my_attribute","is_required":true,"is_unique":true,"default_value":{"type":"static","template":[{"value":5}]},"config":{"currency":{"default_currency_code":"USD","display_type":"symbol"},"record_reference":{"allowed_objects":["people"]}},"is_archived":false}}',
+        ],
         method: "PATCH",
         options: [
           {
@@ -562,6 +664,14 @@ export const groups = {
         body: "none",
         call: getV2ByTargetByIdentifierAttributesByAttributeOptions,
         description: "List select options",
+        example: [
+          "--target",
+          "lists",
+          "--identifier",
+          "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
+          "--attribute",
+          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
+        ],
         method: "GET",
         options: [
           {
@@ -600,6 +710,16 @@ export const groups = {
         body: "required",
         call: postV2ByTargetByIdentifierAttributesByAttributeOptions,
         description: "Create a select option",
+        example: [
+          "--target",
+          "lists",
+          "--identifier",
+          "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
+          "--attribute",
+          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
+          "--body",
+          '{"data":{"title":"Medium"}}',
+        ],
         method: "POST",
         options: [
           {
@@ -630,6 +750,18 @@ export const groups = {
         body: "required",
         call: patchV2ByTargetByIdentifierAttributesByAttributeOptionsByOption,
         description: "Update a select option",
+        example: [
+          "--target",
+          "lists",
+          "--identifier",
+          "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
+          "--attribute",
+          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
+          "--option",
+          "Medium",
+          "--body",
+          '{"data":{"title":"Medium","is_archived":false}}',
+        ],
         method: "PATCH",
         options: [
           {
@@ -668,6 +800,14 @@ export const groups = {
         body: "none",
         call: getV2ByTargetByIdentifierAttributesByAttributeStatuses,
         description: "List statuses",
+        example: [
+          "--target",
+          "lists",
+          "--identifier",
+          "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
+          "--attribute",
+          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
+        ],
         method: "GET",
         options: [
           {
@@ -706,6 +846,16 @@ export const groups = {
         body: "required",
         call: postV2ByTargetByIdentifierAttributesByAttributeStatuses,
         description: "Create a status",
+        example: [
+          "--target",
+          "lists",
+          "--identifier",
+          "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
+          "--attribute",
+          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
+          "--body",
+          '{"data":{"title":"In Progress","celebration_enabled":true,"target_time_in_status":"P0Y0M1DT0H0M0S"}}',
+        ],
         method: "POST",
         options: [
           {
@@ -736,6 +886,18 @@ export const groups = {
         body: "required",
         call: patchV2ByTargetByIdentifierAttributesByAttributeStatusesByStatus,
         description: "Update a status",
+        example: [
+          "--target",
+          "lists",
+          "--identifier",
+          "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
+          "--attribute",
+          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
+          "--status",
+          "In Progress",
+          "--body",
+          '{"data":{"title":"In Progress","celebration_enabled":true,"target_time_in_status":"P0Y0M1DT0H0M0S","is_archived":false}}',
+        ],
         method: "PATCH",
         options: [
           {
@@ -778,6 +940,12 @@ export const groups = {
         body: "required",
         call: postV2ObjectsByObjectRecordsQuery,
         description: "List records",
+        example: [
+          "--object",
+          "people",
+          "--body",
+          '{"filter":{"name":"Ada Lovelace"},"filter_view_id":"938f473e-e354-4f94-89f5-fe59b0dad987","sorts":[{"direction":"asc","attribute":"name","field":"last_name"}],"limit":500,"offset":0}',
+        ],
         method: "POST",
         options: [
           {
@@ -793,6 +961,12 @@ export const groups = {
         body: "required",
         call: postV2ObjectsByObjectRecords,
         description: "Create a record",
+        example: [
+          "--object",
+          "people",
+          "--body",
+          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+        ],
         method: "POST",
         options: [
           {
@@ -809,6 +983,14 @@ export const groups = {
         body: "required",
         call: putV2ObjectsByObjectRecords,
         description: "Upsert a record",
+        example: [
+          "--object",
+          "people",
+          "--matching-attribute",
+          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
+          "--body",
+          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+        ],
         method: "PUT",
         options: [
           {
@@ -832,6 +1014,7 @@ export const groups = {
         body: "none",
         call: deleteV2ObjectsByObjectRecordsByRecordId,
         description: "Delete a record",
+        example: ["--object", "people", "--record-id", "891dcbfc-9141-415d-9b2a-2238a6cc012d"],
         method: "DELETE",
         options: [
           {
@@ -854,6 +1037,7 @@ export const groups = {
         body: "none",
         call: getV2ObjectsByObjectRecordsByRecordId,
         description: "Get a record",
+        example: ["--object", "people", "--record-id", "891dcbfc-9141-415d-9b2a-2238a6cc012d"],
         method: "GET",
         options: [
           {
@@ -876,6 +1060,14 @@ export const groups = {
         body: "required",
         call: patchV2ObjectsByObjectRecordsByRecordId,
         description: "Update a record (append multiselect values)",
+        example: [
+          "--object",
+          "people",
+          "--record-id",
+          "891dcbfc-9141-415d-9b2a-2238a6cc012d",
+          "--body",
+          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+        ],
         method: "PATCH",
         options: [
           {
@@ -898,6 +1090,14 @@ export const groups = {
         body: "required",
         call: putV2ObjectsByObjectRecordsByRecordId,
         description: "Update a record (overwrite multiselect values)",
+        example: [
+          "--object",
+          "people",
+          "--record-id",
+          "891dcbfc-9141-415d-9b2a-2238a6cc012d",
+          "--body",
+          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+        ],
         method: "PUT",
         options: [
           {
@@ -920,6 +1120,12 @@ export const groups = {
         body: "required",
         call: postV2ObjectsByObjectRecordsMerge,
         description: "Merge two records",
+        example: [
+          "--object",
+          "people",
+          "--body",
+          '{"data":{"primary_record_id":"891dcbfc-9141-415d-9b2a-2238a6cc012d","secondary_record_id":"bf071e1f-6035-429d-b874-d83ea64ea13b"}}',
+        ],
         method: "POST",
         options: [
           {
@@ -935,6 +1141,14 @@ export const groups = {
         body: "none",
         call: getV2ObjectsByObjectRecordsByRecordIdAttributesByAttributeValues,
         description: "List record attribute values",
+        example: [
+          "--object",
+          "people",
+          "--record-id",
+          "891dcbfc-9141-415d-9b2a-2238a6cc012d",
+          "--attribute",
+          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
+        ],
         method: "GET",
         options: [
           {
@@ -988,6 +1202,16 @@ export const groups = {
         body: "required",
         call: putV2ObjectsByObjectRecordsByRecordIdAttributesByAttributeValues,
         description: "Write record attribute values",
+        example: [
+          "--object",
+          "people",
+          "--record-id",
+          "891dcbfc-9141-415d-9b2a-2238a6cc012d",
+          "--attribute",
+          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
+          "--body",
+          '{"data":{"values":[{"value":"Acme (old name)","active_from":"2020-01-01T00:00:00Z","active_until":"2021-06-15T09:30:00Z"},{"value":"Acme Corporation","active_from":"2021-06-15T09:30:00Z","active_until":null}],"replace_history":true}}',
+        ],
         method: "PUT",
         options: [
           {
@@ -1017,6 +1241,7 @@ export const groups = {
         body: "none",
         call: getV2ObjectsByObjectRecordsByRecordIdEntries,
         description: "List record entries",
+        example: ["--object", "people", "--record-id", "891dcbfc-9141-415d-9b2a-2238a6cc012d"],
         method: "GET",
         options: [
           {
@@ -1055,6 +1280,10 @@ export const groups = {
         body: "required",
         call: postV2ObjectsRecordsSearch,
         description: "Search records",
+        example: [
+          "--body",
+          '{"query":"alan mathis","limit":25,"objects":["people","deals","1b31b79a-ddf9-4d57-a320-884061b2bcff"],"request_as":{"type":"workspace"}}',
+        ],
         method: "POST",
         options: [],
       }),
@@ -1067,6 +1296,10 @@ export const groups = {
         body: "required",
         call: postV2Sql,
         description: "Query SQL",
+        example: [
+          "--body",
+          '{"sql":"SELECT * FROM companies WHERE companies.name = \'Fundstack\'"}',
+        ],
         method: "POST",
         options: [],
       }),
@@ -1079,6 +1312,7 @@ export const groups = {
         body: "none",
         call: getV2Lists,
         description: "List all lists",
+        example: [],
         method: "GET",
         options: [],
       }),
@@ -1086,6 +1320,10 @@ export const groups = {
         body: "required",
         call: postV2Lists,
         description: "Create a list",
+        example: [
+          "--body",
+          '{"data":{"name":"Enterprise Sales","api_slug":"enterprise_sales","parent_object":"people","workspace_access":"read-and-write","workspace_member_access":[{"workspace_member_id":"50cf242c-7fa3-4cad-87d0-75b1af71c57b","level":"read-and-write"}]}}',
+        ],
         method: "POST",
         options: [],
       }),
@@ -1093,6 +1331,7 @@ export const groups = {
         body: "none",
         call: getV2ListsByList,
         description: "Get a list",
+        example: ["--list", "33ebdbe9-e529-47c9-b894-0ba25e9c15c0"],
         method: "GET",
         options: [
           {
@@ -1108,6 +1347,12 @@ export const groups = {
         body: "required",
         call: patchV2ListsByList,
         description: "Update a list",
+        example: [
+          "--list",
+          "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
+          "--body",
+          '{"data":{"name":"Enterprise Sales","api_slug":"enterprise_sales","workspace_access":"read-and-write","workspace_member_access":[{"workspace_member_id":"50cf242c-7fa3-4cad-87d0-75b1af71c57b","level":"read-and-write"}]}}',
+        ],
         method: "PATCH",
         options: [
           {
@@ -1123,6 +1368,7 @@ export const groups = {
         body: "none",
         call: getV2ListsByListViews,
         description: "List views for list",
+        example: ["--list", "33ebdbe9-e529-47c9-b894-0ba25e9c15c0"],
         method: "GET",
         options: [
           {
@@ -1167,6 +1413,12 @@ export const groups = {
         body: "required",
         call: postV2ListsByListEntriesQuery,
         description: "List entries",
+        example: [
+          "--list",
+          "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
+          "--body",
+          '{"filter":{"name":"Ada Lovelace"},"filter_view_id":"938f473e-e354-4f94-89f5-fe59b0dad987","sorts":[{"direction":"asc","attribute":"name","field":"last_name"}],"limit":500,"offset":0}',
+        ],
         method: "POST",
         options: [
           {
@@ -1182,6 +1434,12 @@ export const groups = {
         body: "required",
         call: postV2ListsByListEntries,
         description: "Create an entry (add record to list)",
+        example: [
+          "--list",
+          "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
+          "--body",
+          '{"data":{"parent_record_id":"891dcbfc-9141-415d-9b2a-2238a6cc012d","parent_object":"people","entry_values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+        ],
         method: "POST",
         options: [
           {
@@ -1198,6 +1456,12 @@ export const groups = {
         body: "required",
         call: putV2ListsByListEntries,
         description: "Upsert a list entry by parent",
+        example: [
+          "--list",
+          "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
+          "--body",
+          '{"data":{"parent_record_id":"891dcbfc-9141-415d-9b2a-2238a6cc012d","parent_object":"people","entry_values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+        ],
         method: "PUT",
         options: [
           {
@@ -1213,6 +1477,12 @@ export const groups = {
         body: "none",
         call: deleteV2ListsByListEntriesByEntryId,
         description: "Delete a list entry",
+        example: [
+          "--list",
+          "enterprise_sales",
+          "--entry-id",
+          "2e6e29ea-c4e0-4f44-842d-78a891f8c156",
+        ],
         method: "DELETE",
         options: [
           {
@@ -1235,6 +1505,12 @@ export const groups = {
         body: "none",
         call: getV2ListsByListEntriesByEntryId,
         description: "Get a list entry",
+        example: [
+          "--list",
+          "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
+          "--entry-id",
+          "2e6e29ea-c4e0-4f44-842d-78a891f8c156",
+        ],
         method: "GET",
         options: [
           {
@@ -1257,6 +1533,14 @@ export const groups = {
         body: "required",
         call: patchV2ListsByListEntriesByEntryId,
         description: "Update a list entry (append multiselect values)",
+        example: [
+          "--list",
+          "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
+          "--entry-id",
+          "2e6e29ea-c4e0-4f44-842d-78a891f8c156",
+          "--body",
+          '{"data":{"entry_values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+        ],
         method: "PATCH",
         options: [
           {
@@ -1279,6 +1563,14 @@ export const groups = {
         body: "required",
         call: putV2ListsByListEntriesByEntryId,
         description: "Update a list entry (overwrite multiselect values)",
+        example: [
+          "--list",
+          "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
+          "--entry-id",
+          "2e6e29ea-c4e0-4f44-842d-78a891f8c156",
+          "--body",
+          '{"data":{"entry_values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+        ],
         method: "PUT",
         options: [
           {
@@ -1301,6 +1593,14 @@ export const groups = {
         body: "none",
         call: getV2ListsByListEntriesByEntryIdAttributesByAttributeValues,
         description: "List attribute values for a list entry",
+        example: [
+          "--list",
+          "enterprise_sales",
+          "--entry-id",
+          "2e6e29ea-c4e0-4f44-842d-78a891f8c156",
+          "--attribute",
+          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
+        ],
         method: "GET",
         options: [
           {
@@ -1354,6 +1654,16 @@ export const groups = {
         body: "required",
         call: putV2ListsByListEntriesByEntryIdAttributesByAttributeValues,
         description: "Write list entry attribute values",
+        example: [
+          "--list",
+          "enterprise_sales",
+          "--entry-id",
+          "2e6e29ea-c4e0-4f44-842d-78a891f8c156",
+          "--attribute",
+          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
+          "--body",
+          '{"data":{"values":[{"value":"Acme (old name)","active_from":"2020-01-01T00:00:00Z","active_until":"2021-06-15T09:30:00Z"},{"value":"Acme Corporation","active_from":"2021-06-15T09:30:00Z","active_until":null}],"replace_history":true}}',
+        ],
         method: "PUT",
         options: [
           {
@@ -1388,6 +1698,7 @@ export const groups = {
         body: "none",
         call: getV2WorkspaceMembers,
         description: "List workspace members",
+        example: [],
         method: "GET",
         options: [],
       }),
@@ -1395,6 +1706,7 @@ export const groups = {
         body: "none",
         call: getV2WorkspaceMembersByWorkspaceMemberId,
         description: "Get a workspace member",
+        example: ["--workspace-member-id", "50cf242c-7fa3-4cad-87d0-75b1af71c57b"],
         method: "GET",
         options: [
           {
@@ -1415,6 +1727,7 @@ export const groups = {
         body: "none",
         call: getV2Notes,
         description: "List notes",
+        example: [],
         method: "GET",
         options: [
           {
@@ -1453,6 +1766,10 @@ export const groups = {
         body: "required",
         call: postV2Notes,
         description: "Create a note",
+        example: [
+          "--body",
+          '{"data":{"parent_object":"people","parent_record_id":"891dcbfc-9141-415d-9b2a-2238a6cc012d","title":"Initial Prospecting Call Summary","format":"markdown","content":"# Meeting Recap: Q4 Planning\\n\\n**Date:** 2023-10-26\\n**Attendees:** Alex, Jamie, Casey\\n\\n## Key Discussion Points\\n\\n- Reviewed Q3 performance metrics.\\n- Brainstormed key initiatives for Q4.\\n- Discussed budget allocation for ==Project Phoenix==.\\n\\n## Action Items\\n\\n1. Alex to finalize Q4 roadmap by EOD Friday.\\n2. Jamie to schedule follow-up with [Marketing Team](https://app.attio.com/teams/marketing).\\n3. Casey to draft initial budget for ~~Project Chimera~~ (now deferred).\\n\\n*Next steps: Review draft roadmap next week.*","created_at":"2023-01-01T15:00:00.000000000Z","meeting_id":"14beef7a-99f7-4534-a87e-70b564330a4c"}}',
+        ],
         method: "POST",
         options: [],
       }),
@@ -1460,6 +1777,7 @@ export const groups = {
         body: "none",
         call: deleteV2NotesByNoteId,
         description: "Delete a note",
+        example: ["--note-id", "ff3f3bd4-40f4-4f80-8187-cd02385af424"],
         method: "DELETE",
         options: [
           {
@@ -1475,6 +1793,7 @@ export const groups = {
         body: "none",
         call: getV2NotesByNoteId,
         description: "Get a note",
+        example: ["--note-id", "ff3f3bd4-40f4-4f80-8187-cd02385af424"],
         method: "GET",
         options: [
           {
@@ -1490,6 +1809,12 @@ export const groups = {
         body: "required",
         call: patchV2NotesByNoteId,
         description: "Update a note",
+        example: [
+          "--note-id",
+          "ff3f3bd4-40f4-4f80-8187-cd02385af424",
+          "--body",
+          '{"data":{"title":"Initial Prospecting Call Summary","format":"markdown","content":"# Meeting Recap: Q4 Planning\\n\\n**Date:** 2023-10-26\\n**Attendees:** Alex, Jamie, Casey\\n\\n## Key Discussion Points\\n\\n- Reviewed Q3 performance metrics.\\n- Brainstormed key initiatives for Q4.\\n- Discussed budget allocation for ==Project Phoenix==.\\n\\n## Action Items\\n\\n1. Alex to finalize Q4 roadmap by EOD Friday.\\n2. Jamie to schedule follow-up with [Marketing Team](https://app.attio.com/teams/marketing).\\n3. Casey to draft initial budget for ~~Project Chimera~~ (now deferred).\\n\\n*Next steps: Review draft roadmap next week.*"}}',
+        ],
         method: "PATCH",
         options: [
           {
@@ -1510,6 +1835,7 @@ export const groups = {
         body: "none",
         call: getV2Tasks,
         description: "List tasks",
+        example: [],
         method: "GET",
         options: [
           {
@@ -1574,6 +1900,10 @@ export const groups = {
         body: "required",
         call: postV2Tasks,
         description: "Create a task",
+        example: [
+          "--body",
+          '{"data":{"content":"Follow up on current software solutions","format":"plaintext","deadline_at":"2023-01-01T15:00:00.000000000Z","is_completed":false,"linked_records":["person@company.com","fundstack.com"],"assignees":[{"referenced_actor_type":"workspace-member","referenced_actor_id":"50cf242c-7fa3-4cad-87d0-75b1af71c57b"}]}}',
+        ],
         method: "POST",
         options: [],
       }),
@@ -1581,6 +1911,7 @@ export const groups = {
         body: "none",
         call: deleteV2TasksByTaskId,
         description: "Delete a task",
+        example: ["--task-id", "649e34f4-c39a-4f4d-99ef-48a36bef8f04"],
         method: "DELETE",
         options: [
           {
@@ -1596,6 +1927,7 @@ export const groups = {
         body: "none",
         call: getV2TasksByTaskId,
         description: "Get a task",
+        example: ["--task-id", "649e34f4-c39a-4f4d-99ef-48a36bef8f04"],
         method: "GET",
         options: [
           {
@@ -1611,6 +1943,12 @@ export const groups = {
         body: "required",
         call: patchV2TasksByTaskId,
         description: "Update a task",
+        example: [
+          "--task-id",
+          "649e34f4-c39a-4f4d-99ef-48a36bef8f04",
+          "--body",
+          '{"data":{"deadline_at":"2023-01-01T15:00:00.000000000Z","is_completed":false,"linked_records":["person@company.com","fundstack.com"],"assignees":[{"referenced_actor_type":"workspace-member","referenced_actor_id":"50cf242c-7fa3-4cad-87d0-75b1af71c57b"}]}}',
+        ],
         method: "PATCH",
         options: [
           {
@@ -1632,6 +1970,7 @@ export const groups = {
         body: "none",
         call: getV2Threads,
         description: "List threads",
+        example: [],
         method: "GET",
         options: [
           {
@@ -1688,6 +2027,7 @@ export const groups = {
         body: "none",
         call: getV2ThreadsByThreadId,
         description: "Get a thread and its comments",
+        example: ["--thread-id", "a649e4d9-435c-43fb-83ba-847b4876f27a"],
         method: "GET",
         options: [
           {
@@ -1731,6 +2071,10 @@ export const groups = {
         body: "required",
         call: postV2Comments,
         description: "Create a comment",
+        example: [
+          "--body",
+          '{"data":{"format":"plaintext","content":"If I put the email address of my colleague on Attio in here, e.g. alice@attio.com, they will be notified. Other emails (e.g. person@example.com) will be turned into clickable links.","author":{"type":"workspace-member","id":"50cf242c-7fa3-4cad-87d0-75b1af71c57b"},"created_at":"2023-01-01T15:00:00.000000000Z","thread_id":"aa1dc1d9-93ac-4c6c-987e-16b6eea9aab2"}}',
+        ],
         method: "POST",
         options: [],
       }),
@@ -1738,6 +2082,7 @@ export const groups = {
         body: "none",
         call: deleteV2CommentsByCommentId,
         description: "Delete a comment",
+        example: ["--comment-id", "aa1dc1d9-93ac-4c6c-987e-16b6eea9aab2"],
         method: "DELETE",
         options: [
           {
@@ -1753,6 +2098,7 @@ export const groups = {
         body: "none",
         call: getV2CommentsByCommentId,
         description: "Get a comment",
+        example: ["--comment-id", "aa1dc1d9-93ac-4c6c-987e-16b6eea9aab2"],
         method: "GET",
         options: [
           {
@@ -1773,6 +2119,7 @@ export const groups = {
         body: "none",
         call: getV2Emails,
         description: "List emails",
+        example: [],
         method: "GET",
         options: [
           {
@@ -1858,6 +2205,7 @@ export const groups = {
         body: "required",
         call: postV2SequencesUnsubscribedEmails,
         description: "Add emails to the unsubscribe list",
+        example: ["--body", '{"data":{"email_addresses":["person@example.com"]}}'],
         method: "POST",
         options: [],
       }),
@@ -1870,6 +2218,7 @@ export const groups = {
         body: "none",
         call: getV2Meetings,
         description: "List meetings",
+        example: [],
         method: "GET",
         options: [
           {
@@ -1949,6 +2298,10 @@ export const groups = {
         body: "required",
         call: postV2Meetings,
         description: "Create a meeting",
+        example: [
+          "--body",
+          '{"data":{"title":"Onboarding Session","description":"Getting you up to speed with the platform and answering any questions you have.","start":{"datetime":"2027-11-27T14:00:00Z","timezone":"America/New_York"},"end":{"datetime":"2027-11-27T15:00:00Z","timezone":"America/New_York"},"is_all_day":false,"participants":[{"email_address":"person@company.com","is_organizer":true,"status":"accepted","name":"Simon Mitchell"}],"linked_records":[{"object":"people","record_id":"891dcbfc-9141-415d-9b2a-2238a6cc012d"}]}}',
+        ],
         method: "POST",
         options: [],
       }),
@@ -1956,6 +2309,7 @@ export const groups = {
         body: "none",
         call: deleteV2MeetingsByMeetingId,
         description: "Delete a meeting",
+        example: ["--meeting-id", "cb59ab17-ad15-460c-a126-0715617c0853"],
         method: "DELETE",
         options: [
           {
@@ -1971,6 +2325,7 @@ export const groups = {
         body: "none",
         call: getV2MeetingsByMeetingId,
         description: "Get a meeting",
+        example: ["--meeting-id", "cb59ab17-ad15-460c-a126-0715617c0853"],
         method: "GET",
         options: [
           {
@@ -1986,6 +2341,12 @@ export const groups = {
         body: "required",
         call: patchV2MeetingsByMeetingId,
         description: "Update a meeting (append linked records)",
+        example: [
+          "--meeting-id",
+          "cb59ab17-ad15-460c-a126-0715617c0853",
+          "--body",
+          '{"data":{"linked_records":[{"object":"people","record_id":"891dcbfc-9141-415d-9b2a-2238a6cc012d"}]}}',
+        ],
         method: "PATCH",
         options: [
           {
@@ -2001,6 +2362,12 @@ export const groups = {
         body: "required",
         call: putV2MeetingsByMeetingId,
         description: "Update a meeting (overwrite linked records)",
+        example: [
+          "--meeting-id",
+          "cb59ab17-ad15-460c-a126-0715617c0853",
+          "--body",
+          '{"data":{"linked_records":[{"object":"people","record_id":"891dcbfc-9141-415d-9b2a-2238a6cc012d"}]}}',
+        ],
         method: "PUT",
         options: [
           {
@@ -2022,6 +2389,7 @@ export const groups = {
         body: "none",
         call: getV2MeetingsByMeetingIdCallRecordings,
         description: "List call recordings",
+        example: ["--meeting-id", "cb59ab17-ad15-460c-a126-0715617c0853"],
         method: "GET",
         options: [
           {
@@ -2053,6 +2421,12 @@ export const groups = {
         body: "required",
         call: postV2MeetingsByMeetingIdCallRecordings,
         description: "Create call recording",
+        example: [
+          "--meeting-id",
+          "cb59ab17-ad15-460c-a126-0715617c0853",
+          "--body",
+          '{"data":{"video_url":"https://example.com/recording.mp4","transcript":[{"speech":"Hello everyone, welcome to the meeting.","start_time":0.5123,"end_time":3.2123,"speaker":{"name":"Simon Mitchell","email_address":"person@company.com"}}]}}',
+        ],
         method: "POST",
         options: [
           {
@@ -2068,6 +2442,12 @@ export const groups = {
         body: "none",
         call: deleteV2MeetingsByMeetingIdCallRecordingsByCallRecordingId,
         description: "Delete call recording",
+        example: [
+          "--meeting-id",
+          "cb59ab17-ad15-460c-a126-0715617c0853",
+          "--call-recording-id",
+          "e8f2a3b7-9b4d-4c5e-8a1f-3d7b2c5e8f9a",
+        ],
         method: "DELETE",
         options: [
           {
@@ -2090,6 +2470,12 @@ export const groups = {
         body: "none",
         call: getV2MeetingsByMeetingIdCallRecordingsByCallRecordingId,
         description: "Get call recording",
+        example: [
+          "--meeting-id",
+          "cb59ab17-ad15-460c-a126-0715617c0853",
+          "--call-recording-id",
+          "e8f2a3b7-9b4d-4c5e-8a1f-3d7b2c5e8f9a",
+        ],
         method: "GET",
         options: [
           {
@@ -2118,6 +2504,12 @@ export const groups = {
         body: "none",
         call: getV2MeetingsByMeetingIdCallRecordingsByCallRecordingIdTranscript,
         description: "Deprecated: Get call transcript",
+        example: [
+          "--meeting-id",
+          "cb59ab17-ad15-460c-a126-0715617c0853",
+          "--call-recording-id",
+          "e8f2a3b7-9b4d-4c5e-8a1f-3d7b2c5e8f9a",
+        ],
         method: "GET",
         options: [
           {
@@ -2154,6 +2546,7 @@ export const groups = {
         body: "none",
         call: getV2Files,
         description: "List files",
+        example: ["--object", "<object>", "--record-id", "<record_id>"],
         method: "GET",
         options: [
           {
@@ -2207,6 +2600,10 @@ export const groups = {
         body: "required",
         call: postV2Files,
         description: "Create a folder",
+        example: [
+          "--body",
+          '{"object":"people","record_id":"bf071e1f-6035-429d-b874-d83ea64ea13b","file_type":"folder","name":"Documents","parent_folder_id":"a1b2c3d4-e5f6-7890-abcd-ef1234567890"}',
+        ],
         method: "POST",
         options: [],
       }),
@@ -2214,6 +2611,7 @@ export const groups = {
         body: "none",
         call: deleteV2FilesByFileId,
         description: "Delete a file",
+        example: ["--file-id", "a1b2c3d4-e5f6-7890-abcd-ef1234567890"],
         method: "DELETE",
         options: [
           {
@@ -2229,6 +2627,7 @@ export const groups = {
         body: "none",
         call: getV2FilesByFileId,
         description: "Get a file",
+        example: ["--file-id", "a1b2c3d4-e5f6-7890-abcd-ef1234567890"],
         method: "GET",
         options: [
           {
@@ -2250,6 +2649,7 @@ export const groups = {
         body: "none",
         call: getV2Webhooks,
         description: "List webhooks",
+        example: [],
         method: "GET",
         options: [
           {
@@ -2274,6 +2674,10 @@ export const groups = {
         body: "required",
         call: postV2Webhooks,
         description: "Create a webhook",
+        example: [
+          "--body",
+          '{"data":{"target_url":"https://example.com/webhook","subscriptions":[{"event_type":"note.created","filter":{"$and":[{"field":"parent_object_id","operator":"equals","value":"97052eb9-e65e-443f-a297-f2d9a4a7f795"}]}}]}}',
+        ],
         method: "POST",
         options: [],
       }),
@@ -2281,6 +2685,7 @@ export const groups = {
         body: "none",
         call: deleteV2WebhooksByWebhookId,
         description: "Delete a webhook",
+        example: ["--webhook-id", "23e42eaf-323a-41da-b5bb-fd67eebda553"],
         method: "DELETE",
         options: [
           {
@@ -2296,6 +2701,7 @@ export const groups = {
         body: "none",
         call: getV2WebhooksByWebhookId,
         description: "Get a webhook",
+        example: ["--webhook-id", "23e42eaf-323a-41da-b5bb-fd67eebda553"],
         method: "GET",
         options: [
           {
@@ -2311,6 +2717,12 @@ export const groups = {
         body: "required",
         call: patchV2WebhooksByWebhookId,
         description: "Update a webhook",
+        example: [
+          "--webhook-id",
+          "23e42eaf-323a-41da-b5bb-fd67eebda553",
+          "--body",
+          '{"data":{"target_url":"https://example.com/webhook","subscriptions":[{"event_type":"note.created","filter":{"$and":[{"field":"parent_object_id","operator":"equals","value":"97052eb9-e65e-443f-a297-f2d9a4a7f795"}]}}]}}',
+        ],
         method: "PATCH",
         options: [
           {
@@ -2332,6 +2744,7 @@ export const groups = {
         body: "none",
         call: getV2Self,
         description: "Identify",
+        example: [],
         method: "GET",
         options: [],
       }),

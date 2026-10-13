@@ -35,7 +35,7 @@ attio-api records --help
 attio-api records upsert-a-record --help
 ```
 
-Path and query parameters are options; a boolean one is sent as false with `--no-<option>`. Operations that take a request body accept it as JSON through `--body`:
+Path and query parameters are options; a boolean one is sent as false with `--no-<option>`. Operations that take a request body accept it as JSON through `--body`. A command's `--help` shows an example built from the samples in Attio's schema and links the page that documents the body:
 
 ```sh
 attio-api objects list-objects

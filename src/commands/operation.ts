@@ -15,6 +15,7 @@ type OperationOption = {
 type OperationDetails = {
   body: "none" | "optional" | "required";
   description: string;
+  example: readonly string[];
   method: string;
   options: readonly OperationOption[];
 };
@@ -64,6 +65,11 @@ const preview: typeof fetch = (...input) => {
   return Promise.resolve(Response.json({ dry_run: true, method, url }));
 };
 
+/** Quotes an argument for a shell when it holds anything a shell would interpret. */
+function quoted(argument: string): string {
+  return /^[\w@%+=:,./<>-]+$/.test(argument) ? argument : `'${argument.replaceAll("'", `'\\''`)}'`;
+}
+
 function parseBody(text: string): unknown {
   try {
     return JSON.parse(text);
@@ -73,7 +79,7 @@ function parseBody(text: string): unknown {
 }
 
 /** Builds the CLI command that runs one operation with the options given on the command line. */
-export function operationCommand(name: string, source: Operation, env: Environment) {
+export function operationCommand(group: string, name: string, source: Operation, env: Environment) {
   const args: Args = {};
   for (const option of source.options) {
     args[optionName(option.name)] = {
@@ -86,7 +92,8 @@ export function operationCommand(name: string, source: Operation, env: Environme
   }
   if (source.body !== "none") {
     args.body = {
-      description: "Request body as JSON",
+      // Attio names the page after the operation, as the generator names the command.
+      description: `Request body as JSON, documented at https://docs.attio.com/rest-api/endpoint-reference/${group}/${name}`,
       required: source.body === "required" || undefined,
       type: "string",
     };
@@ -96,9 +103,19 @@ export function operationCommand(name: string, source: Operation, env: Environme
     args["dry-run"] = { description: "Print the request without sending it", type: "boolean" };
   }
 
+  const example = ["attio-api", group, name, ...source.example].map(quoted).join(" ");
+  const note = "# The body shows every field with a sample value; send the ones you need.";
+
   return define({
     name,
     description: source.description,
+    // A command without arguments is its own example.
+    examples:
+      source.example.length === 0
+        ? undefined
+        : source.body === "none"
+          ? example
+          : `${note}\n${example}`,
     args,
     run: async (ctx) => {
       const values: Record<string, unknown> = ctx.values;
