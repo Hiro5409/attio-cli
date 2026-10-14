@@ -1,0 +1,39 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests",
+    "schedule:weekly",
+    "group:allNonMajor",
+    "group:vitePlus"
+  ],
+  "timezone": "Asia/Tokyo",
+  "minimumReleaseAge": "1 day",
+  "internalChecksFilter": "strict",
+  "prConcurrentLimit": 2,
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "Keep the TypeScript 7-compatible OpenAPI generator packages on their shared prerelease channel.",
+      "matchPackageNames": ["@hey-api/openapi-ts", "@hey-api/shared"],
+      "groupName": "Hey API",
+      "allowedVersions": "/^0\\.0\\.0-next-/",
+      "ignoreUnstable": false,
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Review compatibility override updates separately from Vite+.",
+      "matchDepTypes": ["pnpm-workspace.overrides"],
+      "matchPackageNames": ["!@voidzero-dev/vite-plus-core"],
+      "groupName": null,
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Keep Node.js types aligned with the oldest supported runtime major.",
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": "^24.0.0"
+    }
+  ]
+}
