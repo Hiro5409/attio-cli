@@ -16,6 +16,11 @@
   },
   "packageRules": [
     {
+      "description": "Lockfile maintenance has no release timestamp; pnpm enforces the one-day package age.",
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "minimumReleaseAge": null
+    },
+    {
       "description": "Keep the TypeScript 7-compatible OpenAPI generator packages on their shared prerelease channel.",
       "matchPackageNames": ["@hey-api/openapi-ts", "@hey-api/shared"],
       "groupName": "Hey API",
