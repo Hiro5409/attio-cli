@@ -27,6 +27,11 @@ jobs:
           persist-credentials: false
       - name: Set up development tools
         uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+        with:
+          # タグ実行はリリースとして公開物を作る。mise-action 5.2.0 は公開ジョブで
+          # キャッシュを復元しないよう cache: false を案内している。通常の push と
+          # pull_request ではキャッシュを使う。v5.1.2 にも同じ cache 入力がある。
+          cache: ${{ github.ref_type != 'tag' }}
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Audit dependencies
