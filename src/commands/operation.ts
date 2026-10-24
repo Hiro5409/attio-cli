@@ -126,7 +126,8 @@ export function operationCommand(group: string, name: string, source: Operation,
       }
       if (typeof values.body === "string") input.body = parseBody(values.body);
       if (values["dry-run"]) input.fetch = preview;
-      return JSON.stringify(await source.run(attioClient(env), input), null, 2);
+      const profile = typeof values.profile === "string" ? values.profile : undefined;
+      return JSON.stringify(await source.run(attioClient(env, profile), input), null, 2);
     },
   });
 }

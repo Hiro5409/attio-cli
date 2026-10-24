@@ -1,4 +1,5 @@
 import { cli, define } from "gunshi";
+import { plugin } from "gunshi/plugin";
 import { renderHeader } from "gunshi/renderer";
 
 import type { Environment } from "./api/client.ts";
@@ -49,6 +50,17 @@ export async function main(
       name: "attio-api",
       version: pkg.default.version,
       strict: true,
+      plugins: [
+        plugin({
+          id: "attio:profile",
+          setup: (ctx) => {
+            ctx.addGlobalOption("profile", {
+              description: "Use ATTIO_ACCESS_TOKEN_<NAME> for the named profile",
+              type: "string",
+            });
+          },
+        }),
+      ],
       subCommands: commandTree(env),
       // A header on every run would precede the JSON that scripts and agents parse.
       renderHeader: (ctx) => (ctx.values.help ? renderHeader(ctx) : Promise.resolve("")),

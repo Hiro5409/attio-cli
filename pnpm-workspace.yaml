@@ -3,6 +3,11 @@ minimumReleaseAge: 1440
 overrides:
   # GHSA-r3ph-w7gj-g6xm: the OpenAPI generator resolves a js-yaml release older than the fix.
   js-yaml: 5.4.3
-  vite: npm:@voidzero-dev/vite-plus-core@1.3.0
-  # vite-plus 1.3.0 が同梱する vitest。pin を外すと別コピーが入り、vp test のモックと expect が分裂する。
+  vite: npm:@voidzero-dev/vite-plus-core@1.4.0
+  # Keep test mocks and assertions on the Vitest copy bundled with Vite+.
   vitest: 5.0.5
+
+# The Vite-compatible alias reports the Vite+ release version, not Vite's major.
+peerDependencyRules:
+  allowedVersions:
+    vite: "1.4.0"

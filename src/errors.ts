@@ -45,7 +45,7 @@ const HTTP_FAILURES: Record<number, Pick<CliErrorOptions, "code" | "exitCode" | 
   401: {
     code: "UNAUTHORIZED",
     exitCode: 2,
-    hint: "Set ATTIO_ACCESS_TOKEN to a valid Attio access token.",
+    hint: "Replace the configured Attio access token with a valid one.",
   },
   403: {
     code: "FORBIDDEN",

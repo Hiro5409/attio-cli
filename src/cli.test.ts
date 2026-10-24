@@ -71,6 +71,81 @@ describe("attio-api meta identify", () => {
     });
   });
 
+  test.each([
+    ["--profile", "acme", "meta", "identify"],
+    ["meta", "--profile", "acme", "identify"],
+    ["meta", "identify", "--profile=acme"],
+  ])("selects the named profile with %j", async (...argv) => {
+    const tokens: (string | null)[] = [];
+    server.use(
+      handleGetV2Self(({ request }) => {
+        tokens.push(request.headers.get("authorization"));
+        return HttpResponse.json(activeToken);
+      }),
+    );
+
+    const result = await run(argv, {
+      ATTIO_ACCESS_TOKEN: "default-token",
+      ATTIO_ACCESS_TOKEN_ACME: "acme-token",
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(tokens).toEqual(["Bearer acme-token"]);
+  });
+
+  test("rejects a missing profile token without falling back to the default token", async () => {
+    const requests: Request[] = [];
+    server.use(
+      handleGetV2Self(({ request }) => {
+        requests.push(request);
+        return HttpResponse.json(activeToken);
+      }),
+    );
+
+    const result = await run(["meta", "identify", "--profile", "missing"], {
+      ATTIO_ACCESS_TOKEN: "default-token",
+      ATTIO_ACCESS_TOKEN_ACME: "acme-token",
+    });
+
+    expect(result.exitCode).toBe(2);
+    expect(result.stdout).toBe("");
+    expect(JSON.parse(result.stderr)).toEqual({
+      error: {
+        code: "AUTH_REQUIRED",
+        hint: "Set ATTIO_ACCESS_TOKEN_MISSING to an Attio access token.",
+        message: 'No Attio access token is configured for profile "missing".',
+      },
+    });
+    expect(requests).toEqual([]);
+  });
+
+  test.each(["", "Acme", "acme-inc", "../acme"])(
+    "rejects an invalid profile name %j before making a request",
+    async (profile) => {
+      const result = await run(["meta", "identify", `--profile=${profile}`], {
+        ATTIO_ACCESS_TOKEN: "default-token",
+      });
+
+      expect(result.exitCode).toBe(2);
+      expect(result.stdout).toBe("");
+      expect(JSON.parse(result.stderr)).toMatchObject({ error: { code: "INVALID_ARGUMENT" } });
+    },
+  );
+
+  test.each([
+    { argv: ["meta", "identify"], variable: "ATTIO_ACCESS_TOKEN" },
+    { argv: ["meta", "identify", "--profile", "acme"], variable: "ATTIO_ACCESS_TOKEN_ACME" },
+  ])("does not disclose malformed $variable in errors", async ({ argv, variable }) => {
+    const token = "fake-token-prefix\nfake-token-suffix";
+    const result = await run(argv, { [variable]: token });
+
+    expect(result.stderr).not.toContain("fake-token-prefix");
+    expect(result.stderr).not.toContain("fake-token-suffix");
+    expect(result.exitCode).toBe(2);
+    expect(result.stdout).toBe("");
+    expect(JSON.parse(result.stderr)).toMatchObject({ error: { code: "AUTH_REQUIRED" } });
+  });
+
   test("asks for an access token before sending anything when none is configured", async () => {
     const result = await run(["meta", "identify"]);
 
@@ -144,6 +219,17 @@ describe("attio-api meta identify", () => {
 });
 
 describe("attio-api", () => {
+  test.each([[], ["meta"], ["meta", "identify"]])(
+    "explains --profile without credentials at %j",
+    async (...argv) => {
+      const result = await run([...argv, "--profile", "acme", "--help"]);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stderr).toBe("");
+      expect(result.stdout).toContain("--profile");
+    },
+  );
+
   test.each([
     { argv: ["meta", "identify", "--format", "table"], name: "an unknown option" },
     {
@@ -162,9 +248,14 @@ describe("attio-api", () => {
     expect(JSON.parse(result.stderr)).toMatchObject({ error: { code: "INVALID_ARGUMENT" } });
   });
 
-  test("reports a failure that is neither Attio's nor the network's as UNEXPECTED", async () => {
-    // A header cannot carry this character, so the request fails before anything is sent.
-    const result = await run(["meta", "identify"], { ATTIO_ACCESS_TOKEN: "…" });
+  test("reports an unreadable JSON response as UNEXPECTED", async () => {
+    server.use(
+      handleGetV2Self(
+        () => new HttpResponse("invalid-json", { headers: { "Content-Type": "application/json" } }),
+      ),
+    );
+
+    const result = await run(["meta", "identify"], { ATTIO_ACCESS_TOKEN: "test-token" });
 
     expect(result.exitCode).toBe(1);
     expect(result.stdout).toBe("");

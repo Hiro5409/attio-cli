@@ -56,7 +56,7 @@ const Spec = v.looseObject({
 });
 
 const OPTION_TYPES = new Set(["boolean", "integer", "string"]);
-const RESERVED_OPTIONS = new Set(["body", "dry_run", "help", "version"]);
+const RESERVED_OPTIONS = new Set(["body", "dry_run", "help", "profile", "version"]);
 
 /** "Call recordings" becomes "call-recordings", the form Attio's documentation uses in its URLs. */
 function kebab(text: string): string {

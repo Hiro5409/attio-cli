@@ -12,7 +12,11 @@ writeFileSync(join(directory, "package.json"), '{"private":true,"type":"module"}
 
 function run(command: string, args: string[], expectedStatus = 0) {
   // The checks never reach Attio: no token is set, so every command stops before sending.
-  const { ATTIO_ACCESS_TOKEN: _token, ...env } = process.env;
+  const env = Object.fromEntries(
+    Object.entries(process.env).filter(
+      ([name]) => name !== "ATTIO_ACCESS_TOKEN" && !name.startsWith("ATTIO_ACCESS_TOKEN_"),
+    ),
+  );
   const result = spawnSync(command, args, {
     cwd: directory,
     encoding: "utf8",
@@ -20,11 +24,12 @@ function run(command: string, args: string[], expectedStatus = 0) {
     timeout: 120_000,
   });
   assert.ifError(result.error);
-  assert.equal(result.status, expectedStatus, result.stderr || result.stdout);
+  assert.equal(result.status, expectedStatus, `${result.stdout}${result.stderr}`);
   return result;
 }
 
-run("npm", ["install", "--no-audit", "--no-fund", resolve(tarball)]);
+run("npm", ["install", "--engine-strict", "--no-audit", "--no-fund", resolve(tarball)]);
+run("npm", ["audit", "--audit-level=low"]);
 
 const cli = join(directory, "node_modules/.bin/attio-api");
 const manifest: unknown = JSON.parse(
@@ -38,6 +43,11 @@ assert.match(run(cli, ["records", "upsert-a-record", "--help"]).stdout, /--match
 const unauthenticated = run(cli, ["meta", "identify"], 2);
 assert.equal(unauthenticated.stdout, "");
 assert.match(unauthenticated.stderr, /"code": "AUTH_REQUIRED"/);
+
+const profile = run(cli, ["--profile", "smoke", "meta", "identify"], 2);
+assert.equal(profile.stdout, "");
+assert.match(profile.stderr, /"code": "AUTH_REQUIRED"/);
+assert.match(profile.stderr, /Set ATTIO_ACCESS_TOKEN_SMOKE/);
 
 const invalid = run(cli, ["nonexistent"], 2);
 assert.equal(invalid.stdout, "");

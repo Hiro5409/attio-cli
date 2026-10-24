@@ -26,16 +26,14 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Set up development tools
-        uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+        uses: jdx/mise-action@8418fedb1110381a0d3ba51a7a415d7c1b884550 # v5.2.2
         with:
-          # タグ実行はリリースとして公開物を作る。mise-action 5.2.0 は公開ジョブで
-          # キャッシュを復元しないよう cache: false を案内している。通常の push と
-          # pull_request ではキャッシュを使う。v5.1.2 にも同じ cache 入力がある。
+          # Release artifacts use freshly installed tools instead of shared caches.
           cache: ${{ github.ref_type != 'tag' }}
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Audit dependencies
-        run: pnpm audit --audit-level=high
+        run: pnpm audit --audit-level=low
       - name: Check
         run: vp run check
       - name: Pack npm artifact
@@ -57,7 +55,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        node: ["24.11.0", "24", "26"]
+        node: ["26.12.1", "26"]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     steps:
@@ -88,8 +86,9 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Set up Gitleaks
-        uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+        uses: jdx/mise-action@8418fedb1110381a0d3ba51a7a415d7c1b884550 # v5.2.2
         with:
+          cache: ${{ github.ref_type != 'tag' }}
           install_args: gitleaks
       - name: Scan git history for secrets
         run: gitleaks git --no-banner --redact

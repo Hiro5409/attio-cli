@@ -1,6 +1,8 @@
+import { validateHeaderValue } from "node:http";
+
 import ky, { isHTTPError, isNetworkError, isTimeoutError, type RetryOptions } from "ky";
 
-import { CliError, httpError, networkError } from "../errors.ts";
+import { CliError, httpError, networkError, usageError } from "../errors.ts";
 import { type Client, createClient } from "../types/attio/client/index.ts";
 
 export type Environment = Record<string, string | undefined>;
@@ -23,13 +25,36 @@ async function transport(...input: Parameters<typeof fetch>): Promise<Response> 
   return new Response(body || null, response);
 }
 
-export function attioClient(env: Environment): Client {
-  const accessToken = env.ATTIO_ACCESS_TOKEN?.trim();
+export function attioClient(env: Environment, profile?: string): Client {
+  if (profile !== undefined && !/^[a-z][a-z0-9_]*$/.test(profile)) {
+    throw usageError(
+      "--profile must start with a lowercase letter and contain only lowercase letters, digits, or underscores.",
+    );
+  }
+  const variable =
+    profile === undefined ? "ATTIO_ACCESS_TOKEN" : `ATTIO_ACCESS_TOKEN_${profile.toUpperCase()}`;
+  const accessToken = env[variable]?.trim();
   if (!accessToken) {
-    throw new CliError("No Attio access token is configured.", {
+    throw new CliError(
+      profile === undefined
+        ? "No Attio access token is configured."
+        : `No Attio access token is configured for profile "${profile}".`,
+      {
+        code: "AUTH_REQUIRED",
+        exitCode: 2,
+        hint: `Set ${variable} to an Attio access token.`,
+      },
+    );
+  }
+
+  try {
+    validateHeaderValue("Authorization", `Bearer ${accessToken}`);
+  } catch {
+    // Header errors can contain the credential, so report only its variable name.
+    throw new CliError(`Invalid Attio access token in ${variable}.`, {
       code: "AUTH_REQUIRED",
       exitCode: 2,
-      hint: "Set ATTIO_ACCESS_TOKEN to an Attio access token.",
+      hint: `Replace ${variable} with a valid Attio access token.`,
     });
   }
 

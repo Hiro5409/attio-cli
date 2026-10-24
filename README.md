@@ -4,7 +4,7 @@ An unofficial CLI for the [Attio API](https://docs.attio.com/rest-api/overview).
 
 ## Installation
 
-Requires Node.js 24.11.0 or newer. macOS and Linux are supported; Windows is not tested. mise, pnpm, and Vite+ are development tools and are not required to use the npm package.
+Requires Node.js 26.x, version 26.12.1 or newer. macOS and Linux are supported; Windows is not tested. mise, pnpm, and Vite+ are development tools and are not required to use the npm package.
 
 ```sh
 npm install --global @hiro5409/attio-cli
@@ -23,7 +23,18 @@ export ATTIO_ACCESS_TOKEN=…
 attio-api meta identify
 ```
 
-`meta identify` reports the token's workspace and scopes. The CLI reads the token from `ATTIO_ACCESS_TOKEN` only and stores nothing. Do not pass access tokens as command arguments or keep them in the repository; a secret manager that injects the variable into the command's environment keeps the token out of shell history.
+`meta identify` reports the token's workspace and scopes. Confirm the workspace before making changes.
+
+Use `--profile <name>` to select a named access token from `ATTIO_ACCESS_TOKEN_<NAME>`, with the profile name uppercased:
+
+```sh
+attio-api --profile acme meta identify
+attio-api records list-records --profile acme --object companies --body '{"limit": 10}'
+```
+
+The `acme` profile reads `ATTIO_ACCESS_TOKEN_ACME`. Profile names start with a lowercase letter and contain only lowercase letters, digits, or underscores. A missing profile token is an error; it never falls back to another token. Without `--profile`, the CLI reads `ATTIO_ACCESS_TOKEN`.
+
+The CLI stores no credentials or profile files. Have a secret manager inject the environment variables into the command's process. Do not pass access tokens as command arguments or keep them in the repository.
 
 ## Usage
 
@@ -129,7 +140,7 @@ vp run api-schema:update
 vp run generate-types
 ```
 
-`@hey-api/openapi-ts` and `@hey-api/shared` are pinned to the same snapshot release and move together.
+`@hey-api/openapi-ts` and `@hey-api/shared` use the same pinned snapshot for TypeScript 7 compatibility. Update them together and regenerate the client.
 
 ## Quality checks
 
