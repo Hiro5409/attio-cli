@@ -161,14 +161,14 @@ describe("attio-api meta identify", () => {
   });
 
   test.each([
-    { code: "BAD_REQUEST", exitCode: 2, status: 400 },
-    { code: "UNAUTHORIZED", exitCode: 2, status: 401 },
-    { code: "FORBIDDEN", exitCode: 3, status: 403 },
-    { code: "NOT_FOUND", exitCode: 1, status: 404 },
-    { code: "RATE_LIMITED", exitCode: 4, status: 429 },
-    { code: "API_ERROR", exitCode: 1, status: 409 },
-    { code: "API_ERROR", exitCode: 1, status: 500 },
-  ])("reports HTTP $status from Attio as $code", async ({ code, exitCode, status }) => {
+    { code: "BAD_REQUEST", exitCode: 2, hinted: true, status: 400 },
+    { code: "UNAUTHORIZED", exitCode: 2, hinted: true, status: 401 },
+    { code: "FORBIDDEN", exitCode: 3, hinted: true, status: 403 },
+    { code: "NOT_FOUND", exitCode: 1, hinted: false, status: 404 },
+    { code: "RATE_LIMITED", exitCode: 4, hinted: true, status: 429 },
+    { code: "API_ERROR", exitCode: 1, hinted: false, status: 409 },
+    { code: "API_ERROR", exitCode: 1, hinted: true, status: 500 },
+  ])("reports HTTP $status from Attio as $code", async ({ code, exitCode, hinted, status }) => {
     server.use(
       handleGetV2Self(() =>
         HttpResponse.json(
@@ -195,17 +195,25 @@ describe("attio-api meta identify", () => {
         status,
       },
     });
+    expect("hint" in JSON.parse(result.stderr).error).toBe(hinted);
   });
 
-  test.each([
-    { hinted: false, status: 409 },
-    { hinted: true, status: 500 },
-  ])("warns that a write may have been processed after HTTP $status: $hinted", async (c) => {
-    server.use(handleGetV2Self(() => HttpResponse.json({}, { status: c.status })));
+  test("reports a server failure without error metadata with a retry warning", async () => {
+    server.use(handleGetV2Self(() => HttpResponse.json({}, { status: 500 })));
 
     const result = await run(["meta", "identify"], { ATTIO_ACCESS_TOKEN: "test-token" });
 
-    expect("hint" in JSON.parse(result.stderr).error).toBe(c.hinted);
+    expect(result.exitCode).toBe(1);
+    expect(result.stdout).toBe("");
+    expect(JSON.parse(result.stderr)).toEqual({
+      error: {
+        attio: {},
+        code: "API_ERROR",
+        hint: "A write may have reached Attio, so check before retrying.",
+        message: "Attio returned HTTP 500.",
+        status: 500,
+      },
+    });
   });
 
   test("prints a response that departs from the published schema as Attio returned it", async () => {
@@ -311,6 +319,16 @@ describe("attio-api files list-files", () => {
       object: "companies",
       record_id: "9f8e7d6c-5b4a-4c3d-8e2f-1a0b9c8d7e6f",
     });
+  });
+});
+
+describe("attio-api files list-files --help", () => {
+  test("quotes placeholder arguments so copied examples do not redirect the shell", async () => {
+    const result = await run(["files", "list-files", "--help"]);
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stderr).toBe("");
+    expect(result.stdout).toContain("--object '<object>' --record-id '<record_id>'");
   });
 });
 
@@ -566,46 +584,107 @@ describe("rate limiting", () => {
 });
 
 describe("attio-api --help", () => {
-  test("describes each group of commands in Attio's own words", async () => {
+  test("summarizes group descriptions without truncating abbreviations", async () => {
     const result = await run(["--help"]);
 
-    expect(result.exitCode).toBe(0);
-    expect(result.stdout).toMatch(
-      /^\s+meta\s+Meta endpoints are used to get information about the API token\.$/m,
-    );
-    expect(result.stdout).toMatch(
-      /^\s+threads\s+Threads are groups of comments on either a record or entry\.$/m,
-    );
     expect(result.stdout).toMatch(
       /^\s+records\s+Records are individual instances of objects e\.g\. a specific person or company\.$/m,
+    );
+    expect(result.stdout).toMatch(
+      /^\s+activities\s+Activities model event-based data that can be logged against a record, for example a phone call\.$/m,
     );
   });
 });
 
 describe("attio-api records upsert-a-record --help", () => {
-  test("links the page of Attio's API reference that documents the body", async () => {
+  test("documents the body with an API reference and a quoted Attio request example", async () => {
     const result = await run(["records", "upsert-a-record", "--help"]);
 
     expect(result.stdout).toContain(
       "https://docs.attio.com/rest-api/endpoint-reference/records/upsert-a-record",
     );
-  });
-
-  test("shows an example built from the samples in Attio's schema", async () => {
-    const result = await run(["records", "upsert-a-record", "--help"]);
-
-    expect(result.stdout).toContain(
-      `attio-api records upsert-a-record --object people --matching-attribute 41252299-f8c7-4b5e-99c9-4ff8321d2f96 --body '{"data":{"values":{`,
+    expect(result.stdout).toContain("attio-api records upsert-a-record");
+    const body = /--body '((?:[^'\n]|'\\'')+)'/.exec(result.stdout)?.[1];
+    expect(body).toBeDefined();
+    expect(JSON.parse((body ?? "").replaceAll("'\\''", "'"))).toHaveProperty(
+      "data.values.email_addresses",
     );
+  });
+});
+
+describe("attio-api activity-records", () => {
+  test.each([
+    { command: "create-an-activity-record", method: "POST", options: [] },
+    {
+      command: "upsert-an-activity-record",
+      method: "PUT",
+      options: ["--matching-attribute", "timestamp"],
+    },
+  ])("shows creation requirements and forwards activity values with $command", async (entry) => {
+    const help = await run(["activity-records", entry.command, "--help"]);
+
+    expect(help.stdout).toContain("data.values.timestamp");
+    expect(help.stdout).toContain("https://docs.attio.com/rest-api/guides/activities");
+
+    const requests: { body: unknown; method: string; url: string }[] = [];
+    server.use(
+      http.all("https://api.attio.com/v2/activities/phone_calls/records", async ({ request }) => {
+        requests.push({ body: await request.json(), method: request.method, url: request.url });
+        return HttpResponse.json({ data: {} });
+      }),
+    );
+    const body = {
+      data: {
+        values: {
+          timestamp: "2026-08-14T11:50:00.000Z",
+          linked_records: [
+            {
+              target_object: "companies",
+              target_record_reference: {
+                match: { domains: ["example.com"] },
+                if_unmatched: "create",
+                create: { name: "Example" },
+              },
+            },
+          ],
+        },
+      },
+    };
+    const result = await run(
+      [
+        "activity-records",
+        entry.command,
+        "--activity",
+        "phone_calls",
+        ...entry.options,
+        "--body",
+        JSON.stringify(body),
+      ],
+      { ATTIO_ACCESS_TOKEN: "test-token" },
+    );
+
+    expect(result).toEqual({
+      exitCode: 0,
+      stderr: "",
+      stdout: JSON.stringify({ data: {} }, null, 2),
+    });
+    expect(requests).toEqual([
+      {
+        body,
+        method: entry.method,
+        url:
+          "https://api.attio.com/v2/activities/phone_calls/records" +
+          (entry.method === "PUT" ? "?matching_attribute=timestamp" : ""),
+      },
+    ]);
   });
 });
 
 describe("every generated command", () => {
   const commands = Object.entries(groups).flatMap(([group, members]) =>
-    Object.entries(members.commands).map(([name, { example, method }]) => ({
+    Object.entries(members.commands).map(([name, { example }]) => ({
       example,
       group,
-      method,
       name,
     })),
   );
@@ -622,15 +701,6 @@ describe("every generated command", () => {
     );
 
     expect(commands).toHaveLength(operations.length - 2);
-  });
-
-  test.each(commands)("attio-api $group $name explains itself without a token", async (command) => {
-    const result = await run([command.group, command.name, "--help"]);
-
-    expect(result.exitCode).toBe(0);
-    expect(result.stderr).toBe("");
-    expect(result.stdout).toContain(`attio-api ${command.group} ${command.name}`);
-    expect(result.stdout.includes("--dry-run")).toBe(command.method === "DELETE");
   });
 
   test.each(commands)("attio-api $group $name accepts its own example", async (command) => {

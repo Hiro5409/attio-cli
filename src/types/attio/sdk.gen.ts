@@ -446,7 +446,7 @@ export const getV2ObjectsByObjectViews = <ThrowOnError extends boolean = true>(
  *
  * Lists all system-defined and user-defined activities in your workspace.
  *
- * This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+ * This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
  *
  * Required scopes: `activity_configuration:read`.
  *
@@ -466,7 +466,7 @@ export const getV2Activities = <ThrowOnError extends boolean = true>(
  *
  * Creates a new custom activity in your workspace. Your workspace must have the custom activities billing feature enabled. Public apps may instead create activities with the integration activities billing feature.
  *
- * This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+ * This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
  *
  * Required scopes: `activity_configuration:read-write`.
  *
@@ -492,7 +492,7 @@ export const postV2Activities = <ThrowOnError extends boolean = true>(
  *
  * This endpoint should be used with caution as it has the potential to remove a large amount of potentially valuable data.
  *
- * This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+ * This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
  *
  * Required scopes: `activity_configuration:read-write`, `activity_record:read-write`.
  *
@@ -520,7 +520,7 @@ export const deleteV2ActivitiesByActivity = <ThrowOnError extends boolean = true
  *
  * Gets a single activity by its `activity_id` or slug.
  *
- * This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+ * This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
  *
  * Required scopes: `activity_configuration:read`.
  *
@@ -548,7 +548,7 @@ export const getV2ActivitiesByActivity = <ThrowOnError extends boolean = true>(
  *
  * Updates a single activity by its `activity_id` or slug. The schema an activity extends is fixed after creation, so `extends` cannot be changed.
  *
- * This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+ * This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
  *
  * Required scopes: `activity_configuration:read-write`.
  *
@@ -576,229 +576,11 @@ export const patchV2ActivitiesByActivity = <ThrowOnError extends boolean = true>
   });
 
 /**
- * List activity records
- *
- * Lists activity records, with the option to filter and sort results.
- *
- * This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
- *
- * Required scopes: `activity_record:read`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
- *
- * Supported token levels: `workspace`, `user`.
- */
-export const postV2ActivitiesByActivityRecordsQuery = <ThrowOnError extends boolean = true>(
-  options: Options<PostV2ActivitiesByActivityRecordsQueryData, ThrowOnError>,
-): RequestResult<
-  PostV2ActivitiesByActivityRecordsQueryResponses,
-  PostV2ActivitiesByActivityRecordsQueryErrors,
-  ThrowOnError
-> =>
-  (options.client ?? client).post<
-    PostV2ActivitiesByActivityRecordsQueryResponses,
-    PostV2ActivitiesByActivityRecordsQueryErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: "bearer", type: "http" }],
-    url: "/v2/activities/{activity}/records/query",
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
-
-/**
- * Create an activity record
- *
- * Creates a new activity record, for example one specific phone call.
- *
- * This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
- *
- * Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
- *
- * Supported token levels: `workspace`, `user`.
- */
-export const postV2ActivitiesByActivityRecords = <ThrowOnError extends boolean = true>(
-  options: Options<PostV2ActivitiesByActivityRecordsData, ThrowOnError>,
-): RequestResult<
-  PostV2ActivitiesByActivityRecordsResponses,
-  PostV2ActivitiesByActivityRecordsErrors,
-  ThrowOnError
-> =>
-  (options.client ?? client).post<
-    PostV2ActivitiesByActivityRecordsResponses,
-    PostV2ActivitiesByActivityRecordsErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: "bearer", type: "http" }],
-    url: "/v2/activities/{activity}/records",
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
-
-/**
- * Upsert an activity record
- *
- * Use this endpoint to create or update an activity record. A matching attribute is used to search for existing activity records. If a record is found with the same value for the matching attribute, that record will be updated. If no record with the same value for the matching attribute is found, a new record will be created instead. If you would like to avoid matching, please use the create activity record endpoint.
- *
- * If the matching attribute is a multiselect attribute, new values will be added and existing values will not be deleted. For any other multiselect attribute, all values will be either created or deleted as necessary to match the list of supplied values.
- *
- * This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
- *
- * Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
- *
- * Supported token levels: `workspace`, `user`.
- */
-export const putV2ActivitiesByActivityRecords = <ThrowOnError extends boolean = true>(
-  options: Options<PutV2ActivitiesByActivityRecordsData, ThrowOnError>,
-): RequestResult<
-  PutV2ActivitiesByActivityRecordsResponses,
-  PutV2ActivitiesByActivityRecordsErrors,
-  ThrowOnError
-> =>
-  (options.client ?? client).put<
-    PutV2ActivitiesByActivityRecordsResponses,
-    PutV2ActivitiesByActivityRecordsErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: "bearer", type: "http" }],
-    url: "/v2/activities/{activity}/records",
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
-
-/**
- * Delete an activity record
- *
- * Deletes a single activity record by its `record_id`.
- *
- * This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
- *
- * Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
- *
- * Supported token levels: `workspace`, `user`.
- */
-export const deleteV2ActivitiesByActivityRecordsByRecordId = <ThrowOnError extends boolean = true>(
-  options: Options<DeleteV2ActivitiesByActivityRecordsByRecordIdData, ThrowOnError>,
-): RequestResult<
-  DeleteV2ActivitiesByActivityRecordsByRecordIdResponses,
-  DeleteV2ActivitiesByActivityRecordsByRecordIdErrors,
-  ThrowOnError
-> =>
-  (options.client ?? client).delete<
-    DeleteV2ActivitiesByActivityRecordsByRecordIdResponses,
-    DeleteV2ActivitiesByActivityRecordsByRecordIdErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: "bearer", type: "http" }],
-    url: "/v2/activities/{activity}/records/{record_id}",
-    ...options,
-  });
-
-/**
- * Get an activity record
- *
- * Gets a single activity record by its `record_id`.
- *
- * This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
- *
- * Required scopes: `activity_record:read`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
- *
- * Supported token levels: `workspace`, `user`.
- */
-export const getV2ActivitiesByActivityRecordsByRecordId = <ThrowOnError extends boolean = true>(
-  options: Options<GetV2ActivitiesByActivityRecordsByRecordIdData, ThrowOnError>,
-): RequestResult<
-  GetV2ActivitiesByActivityRecordsByRecordIdResponses,
-  GetV2ActivitiesByActivityRecordsByRecordIdErrors,
-  ThrowOnError
-> =>
-  (options.client ?? client).get<
-    GetV2ActivitiesByActivityRecordsByRecordIdResponses,
-    GetV2ActivitiesByActivityRecordsByRecordIdErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: "bearer", type: "http" }],
-    url: "/v2/activities/{activity}/records/{record_id}",
-    ...options,
-  });
-
-/**
- * Update an activity record (append multiselect values)
- *
- * Use this endpoint to update activity records by `record_id`. If the update payload includes multiselect attributes, the values supplied will be created and prepended to the list of values that already exist (if any). Use the `PUT` endpoint to overwrite or remove multiselect attribute values.
- *
- * This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
- *
- * Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
- *
- * Supported token levels: `workspace`, `user`.
- */
-export const patchV2ActivitiesByActivityRecordsByRecordId = <ThrowOnError extends boolean = true>(
-  options: Options<PatchV2ActivitiesByActivityRecordsByRecordIdData, ThrowOnError>,
-): RequestResult<
-  PatchV2ActivitiesByActivityRecordsByRecordIdResponses,
-  PatchV2ActivitiesByActivityRecordsByRecordIdErrors,
-  ThrowOnError
-> =>
-  (options.client ?? client).patch<
-    PatchV2ActivitiesByActivityRecordsByRecordIdResponses,
-    PatchV2ActivitiesByActivityRecordsByRecordIdErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: "bearer", type: "http" }],
-    url: "/v2/activities/{activity}/records/{record_id}",
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
-
-/**
- * Update an activity record (overwrite multiselect values)
- *
- * Use this endpoint to update activity records by `record_id`. If the update payload includes multiselect attributes, the values supplied will overwrite/remove the list of values that already exist (if any). Use the `PATCH` endpoint to append multiselect values without removing those that already exist.
- *
- * This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
- *
- * Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
- *
- * Supported token levels: `workspace`, `user`.
- */
-export const putV2ActivitiesByActivityRecordsByRecordId = <ThrowOnError extends boolean = true>(
-  options: Options<PutV2ActivitiesByActivityRecordsByRecordIdData, ThrowOnError>,
-): RequestResult<
-  PutV2ActivitiesByActivityRecordsByRecordIdResponses,
-  PutV2ActivitiesByActivityRecordsByRecordIdErrors,
-  ThrowOnError
-> =>
-  (options.client ?? client).put<
-    PutV2ActivitiesByActivityRecordsByRecordIdResponses,
-    PutV2ActivitiesByActivityRecordsByRecordIdErrors,
-    ThrowOnError
-  >({
-    security: [{ scheme: "bearer", type: "http" }],
-    url: "/v2/activities/{activity}/records/{record_id}",
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
-
-/**
  * List attributes
  *
- * Lists all attributes defined on a specific object or list. Attributes are returned in the order that they are sorted by in the UI.
+ * Lists all attributes defined on a specific object, list or activity. Attributes are returned in the order that they are sorted by in the UI.
  *
- * When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+ * When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`. When `target` is `activities`, the required scopes are `activity_configuration:read`.
  *
  * Supported token levels: `workspace`, `user`.
  */
@@ -818,13 +600,15 @@ export const getV2ByTargetByIdentifierAttributes = <ThrowOnError extends boolean
 /**
  * Create an attribute
  *
- * Creates a new attribute on either an object or a list.
+ * Creates a new attribute on either an object, a list or an activity.
  *
  * For record-reference attributes, you can optionally create a bidirectional relationship by providing a `relationship` object. This will create two entangled attributes: one on the specified object and a reverse attribute on the related object.
  *
  * To create an attribute on an object, you must also have the `object_configuration:read-write` scope.
  *
  * To create an attribute on a list, you must also have the `list_configuration:read-write` scope.
+ *
+ * To create an attribute on an activity, you must also have the `activity_configuration:read-write` scope.
  *
  * Supported token levels: `workspace`, `user`.
  */
@@ -852,9 +636,9 @@ export const postV2ByTargetByIdentifierAttributes = <ThrowOnError extends boolea
 /**
  * Get an attribute
  *
- * Gets information about a single attribute on either an object or a list.
+ * Gets information about a single attribute on either an object, a list or an activity.
  *
- * When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+ * When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`. When `target` is `activities`, the required scopes are `activity_configuration:read`.
  *
  * Supported token levels: `workspace`, `user`.
  */
@@ -878,9 +662,9 @@ export const getV2ByTargetByIdentifierAttributesByAttribute = <ThrowOnError exte
 /**
  * Update an attribute
  *
- * Updates a single attribute on a given object or list.
+ * Updates a single attribute on a given object, list or activity.
  *
- * When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+ * When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`. When `target` is `activities`, the required scopes are `activity_configuration:read-write`.
  *
  * Supported token levels: `workspace`, `user`.
  */
@@ -910,9 +694,9 @@ export const patchV2ByTargetByIdentifierAttributesByAttribute = <
 /**
  * List select options
  *
- * Lists all select options for a particular attribute on either an object or a list.
+ * Lists all select options for a particular attribute on either an object, a list or an activity.
  *
- * When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`.
+ * When `target` is `objects`, the required scopes are `object_configuration:read`. When `target` is `lists`, the required scopes are `list_configuration:read`. When `target` is `activities`, the required scopes are `activity_configuration:read`.
  *
  * Supported token levels: `workspace`, `user`.
  */
@@ -938,9 +722,9 @@ export const getV2ByTargetByIdentifierAttributesByAttributeOptions = <
 /**
  * Create a select option
  *
- * Adds a select option to a select attribute on an object or a list.
+ * Adds a select option to a select attribute on an object, a list or an activity.
  *
- * When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+ * When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`. When `target` is `activities`, the required scopes are `activity_configuration:read-write`.
  *
  * Supported token levels: `workspace`, `user`.
  */
@@ -970,9 +754,9 @@ export const postV2ByTargetByIdentifierAttributesByAttributeOptions = <
 /**
  * Update a select option
  *
- * Updates a select option on an attribute on either an object or a list.
+ * Updates a select option on an attribute on either an object, a list or an activity.
  *
- * When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`.
+ * When `target` is `objects`, the required scopes are `object_configuration:read-write`. When `target` is `lists`, the required scopes are `list_configuration:read-write`. When `target` is `activities`, the required scopes are `activity_configuration:read-write`.
  *
  * Supported token levels: `workspace`, `user`.
  */
@@ -1464,6 +1248,224 @@ export const postV2ObjectsRecordsSearch = <ThrowOnError extends boolean = true>(
   >({
     security: [{ scheme: "bearer", type: "http" }],
     url: "/v2/objects/records/search",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
+ * List activity records
+ *
+ * Lists activity records, with the option to filter and sort results.
+ *
+ * This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+ *
+ * Required scopes: `activity_record:read`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
+ *
+ * Supported token levels: `workspace`, `user`.
+ */
+export const postV2ActivitiesByActivityRecordsQuery = <ThrowOnError extends boolean = true>(
+  options: Options<PostV2ActivitiesByActivityRecordsQueryData, ThrowOnError>,
+): RequestResult<
+  PostV2ActivitiesByActivityRecordsQueryResponses,
+  PostV2ActivitiesByActivityRecordsQueryErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostV2ActivitiesByActivityRecordsQueryResponses,
+    PostV2ActivitiesByActivityRecordsQueryErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/v2/activities/{activity}/records/query",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
+ * Create an activity record
+ *
+ * Creates a new activity record, for example one specific phone call.
+ *
+ * This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+ *
+ * Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
+ *
+ * Supported token levels: `workspace`, `user`.
+ */
+export const postV2ActivitiesByActivityRecords = <ThrowOnError extends boolean = true>(
+  options: Options<PostV2ActivitiesByActivityRecordsData, ThrowOnError>,
+): RequestResult<
+  PostV2ActivitiesByActivityRecordsResponses,
+  PostV2ActivitiesByActivityRecordsErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostV2ActivitiesByActivityRecordsResponses,
+    PostV2ActivitiesByActivityRecordsErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/v2/activities/{activity}/records",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
+ * Upsert an activity record
+ *
+ * Use this endpoint to create or update an activity record. A matching attribute is used to search for existing activity records. If a record is found with the same value for the matching attribute, that record will be updated. If no record with the same value for the matching attribute is found, a new record will be created instead. If you would like to avoid matching, please use the [Create activity record endpoint](/rest-api/endpoint-reference/activity-records/create-an-activity-record).
+ *
+ * If the matching attribute is a multiselect attribute, new values will be added and existing values will not be deleted. For any other multiselect attribute, all values will be either created or deleted as necessary to match the list of supplied values.
+ *
+ * This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+ *
+ * Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
+ *
+ * Supported token levels: `workspace`, `user`.
+ */
+export const putV2ActivitiesByActivityRecords = <ThrowOnError extends boolean = true>(
+  options: Options<PutV2ActivitiesByActivityRecordsData, ThrowOnError>,
+): RequestResult<
+  PutV2ActivitiesByActivityRecordsResponses,
+  PutV2ActivitiesByActivityRecordsErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutV2ActivitiesByActivityRecordsResponses,
+    PutV2ActivitiesByActivityRecordsErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/v2/activities/{activity}/records",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
+ * Delete an activity record
+ *
+ * Deletes a single activity record by its `record_id`.
+ *
+ * This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+ *
+ * Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
+ *
+ * Supported token levels: `workspace`, `user`.
+ */
+export const deleteV2ActivitiesByActivityRecordsByRecordId = <ThrowOnError extends boolean = true>(
+  options: Options<DeleteV2ActivitiesByActivityRecordsByRecordIdData, ThrowOnError>,
+): RequestResult<
+  DeleteV2ActivitiesByActivityRecordsByRecordIdResponses,
+  DeleteV2ActivitiesByActivityRecordsByRecordIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteV2ActivitiesByActivityRecordsByRecordIdResponses,
+    DeleteV2ActivitiesByActivityRecordsByRecordIdErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/v2/activities/{activity}/records/{record_id}",
+    ...options,
+  });
+
+/**
+ * Get an activity record
+ *
+ * Gets a single activity record by its `record_id`.
+ *
+ * This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+ *
+ * Required scopes: `activity_record:read`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
+ *
+ * Supported token levels: `workspace`, `user`.
+ */
+export const getV2ActivitiesByActivityRecordsByRecordId = <ThrowOnError extends boolean = true>(
+  options: Options<GetV2ActivitiesByActivityRecordsByRecordIdData, ThrowOnError>,
+): RequestResult<
+  GetV2ActivitiesByActivityRecordsByRecordIdResponses,
+  GetV2ActivitiesByActivityRecordsByRecordIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetV2ActivitiesByActivityRecordsByRecordIdResponses,
+    GetV2ActivitiesByActivityRecordsByRecordIdErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/v2/activities/{activity}/records/{record_id}",
+    ...options,
+  });
+
+/**
+ * Update an activity record (append multiselect values)
+ *
+ * Use this endpoint to update activity records by `record_id`. If the update payload includes multiselect attributes, the values supplied will be created and prepended to the list of values that already exist (if any). Use the `PUT` endpoint to overwrite or remove multiselect attribute values.
+ *
+ * This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+ *
+ * Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
+ *
+ * Supported token levels: `workspace`, `user`.
+ */
+export const patchV2ActivitiesByActivityRecordsByRecordId = <ThrowOnError extends boolean = true>(
+  options: Options<PatchV2ActivitiesByActivityRecordsByRecordIdData, ThrowOnError>,
+): RequestResult<
+  PatchV2ActivitiesByActivityRecordsByRecordIdResponses,
+  PatchV2ActivitiesByActivityRecordsByRecordIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).patch<
+    PatchV2ActivitiesByActivityRecordsByRecordIdResponses,
+    PatchV2ActivitiesByActivityRecordsByRecordIdErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/v2/activities/{activity}/records/{record_id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
+ * Update an activity record (overwrite multiselect values)
+ *
+ * Use this endpoint to update activity records by `record_id`. If the update payload includes multiselect attributes, the values supplied will overwrite/remove the list of values that already exist (if any). Use the `PATCH` endpoint to append multiselect values without removing those that already exist.
+ *
+ * This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
+ *
+ * Required scopes: `activity_record:read-write`, `activity_configuration:read`, `object_configuration:read`, `record_permission:read`.
+ *
+ * Supported token levels: `workspace`, `user`.
+ */
+export const putV2ActivitiesByActivityRecordsByRecordId = <ThrowOnError extends boolean = true>(
+  options: Options<PutV2ActivitiesByActivityRecordsByRecordIdData, ThrowOnError>,
+): RequestResult<
+  PutV2ActivitiesByActivityRecordsByRecordIdResponses,
+  PutV2ActivitiesByActivityRecordsByRecordIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutV2ActivitiesByActivityRecordsByRecordIdResponses,
+    PutV2ActivitiesByActivityRecordsByRecordIdErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/v2/activities/{activity}/records/{record_id}",
     ...options,
     headers: {
       "Content-Type": "application/json",

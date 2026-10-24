@@ -46,7 +46,15 @@ const Spec = v.looseObject({
         ),
         requestBody: v.optional(
           v.object({
-            content: v.object({ "application/json": v.optional(v.object({ schema: BodySchema })) }),
+            content: v.object({
+              "application/json": v.optional(
+                v.object({
+                  example: v.optional(v.unknown()),
+                  examples: v.optional(v.record(v.string(), v.object({ value: v.unknown() }))),
+                  schema: BodySchema,
+                }),
+              ),
+            }),
           }),
         ),
       }),
@@ -151,9 +159,14 @@ const handler: CommandsPlugin["Handler"] = ({ plugin }) => {
         `--${parameter.name.replaceAll("_", "-")}`,
         String(samples.get(parameter.name) ?? `<${parameter.name}>`),
       ]);
-    const body = details.requestBody?.content["application/json"]?.schema;
-    if (body) {
-      example.push("--body", JSON.stringify(sample(body, { skipReadOnly: true }, spec)));
+    const media = details.requestBody?.content["application/json"];
+    if (media) {
+      // OpenAPI media-type examples take precedence over schema examples.
+      const provided =
+        media.example !== undefined ? media.example : Object.values(media.examples ?? {})[0]?.value;
+      const body =
+        provided === undefined ? sample(media.schema, { skipReadOnly: true }, spec) : provided;
+      example.push("--body", JSON.stringify(body));
     }
 
     group.set(

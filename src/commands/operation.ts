@@ -67,7 +67,7 @@ const preview: typeof fetch = (...input) => {
 
 /** Quotes an argument for a shell when it holds anything a shell would interpret. */
 function quoted(argument: string): string {
-  return /^[\w@%+=:,./<>-]+$/.test(argument) ? argument : `'${argument.replaceAll("'", `'\\''`)}'`;
+  return /^[\w@%+=:,./-]+$/.test(argument) ? argument : `'${argument.replaceAll("'", `'\\''`)}'`;
 }
 
 function parseBody(text: string): unknown {
@@ -104,7 +104,15 @@ export function operationCommand(group: string, name: string, source: Operation,
   }
 
   const example = ["attio-api", group, name, ...source.example].map(quoted).join(" ");
-  const note = "# The body shows every field with a sample value; send the ones you need.";
+  let note = "# Examples contain sample values; supply any required attributes for your target.";
+  if (
+    group === "activity-records" &&
+    (name === "create-an-activity-record" || name === "upsert-an-activity-record")
+  ) {
+    note +=
+      "\n# Creating an activity record requires data.values.timestamp in ISO 8601 format." +
+      "\n# https://docs.attio.com/rest-api/guides/activities";
+  }
 
   return define({
     name,

@@ -309,201 +309,8 @@ export const groups = {
         ],
       }),
     },
-    description: "",
-  },
-  "activity-records": {
-    commands: {
-      "list-activity-records": operation({
-        body: "required",
-        call: postV2ActivitiesByActivityRecordsQuery,
-        description: "List activity records",
-        example: [
-          "--activity",
-          "phone_calls",
-          "--body",
-          '{"filter":{"name":"Ada Lovelace"},"sorts":[{"direction":"asc","attribute":"name","field":"last_name"}],"limit":500,"offset":0}',
-        ],
-        method: "POST",
-        options: [
-          {
-            description: "A UUID or slug to identify the activity.",
-            in: "path",
-            name: "activity",
-            required: true,
-            type: "string",
-          },
-        ],
-      }),
-      "create-an-activity-record": operation({
-        body: "required",
-        call: postV2ActivitiesByActivityRecords,
-        description: "Create an activity record",
-        example: [
-          "--activity",
-          "phone_calls",
-          "--body",
-          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
-        ],
-        method: "POST",
-        options: [
-          {
-            description: "A UUID or slug to identify the activity.",
-            in: "path",
-            name: "activity",
-            required: true,
-            type: "string",
-          },
-        ],
-      }),
-      "upsert-an-activity-record": operation({
-        body: "required",
-        call: putV2ActivitiesByActivityRecords,
-        description: "Upsert an activity record",
-        example: [
-          "--activity",
-          "phone_calls",
-          "--matching-attribute",
-          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
-          "--body",
-          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
-        ],
-        method: "PUT",
-        options: [
-          {
-            description: "A UUID or slug to identify the activity.",
-            in: "path",
-            name: "activity",
-            required: true,
-            type: "string",
-          },
-          {
-            description:
-              "The ID or slug of the attribute to use to check if an activity record already exists. The attribute must be unique.",
-            in: "query",
-            name: "matching_attribute",
-            required: true,
-            type: "string",
-          },
-        ],
-      }),
-      "delete-an-activity-record": operation({
-        body: "none",
-        call: deleteV2ActivitiesByActivityRecordsByRecordId,
-        description: "Delete an activity record",
-        example: [
-          "--activity",
-          "phone_calls",
-          "--record-id",
-          "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26",
-        ],
-        method: "DELETE",
-        options: [
-          {
-            description: "A UUID or slug to identify the activity.",
-            in: "path",
-            name: "activity",
-            required: true,
-            type: "string",
-          },
-          {
-            description: "A UUID identifying the activity record to delete.",
-            in: "path",
-            name: "record_id",
-            required: true,
-            type: "string",
-          },
-        ],
-      }),
-      "get-an-activity-record": operation({
-        body: "none",
-        call: getV2ActivitiesByActivityRecordsByRecordId,
-        description: "Get an activity record",
-        example: [
-          "--activity",
-          "phone_calls",
-          "--record-id",
-          "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26",
-        ],
-        method: "GET",
-        options: [
-          {
-            description: "A UUID or slug to identify the activity.",
-            in: "path",
-            name: "activity",
-            required: true,
-            type: "string",
-          },
-          {
-            description: "A UUID identifying the activity record.",
-            in: "path",
-            name: "record_id",
-            required: true,
-            type: "string",
-          },
-        ],
-      }),
-      "update-an-activity-record-append-multiselect-values": operation({
-        body: "required",
-        call: patchV2ActivitiesByActivityRecordsByRecordId,
-        description: "Update an activity record (append multiselect values)",
-        example: [
-          "--activity",
-          "phone_calls",
-          "--record-id",
-          "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26",
-          "--body",
-          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
-        ],
-        method: "PATCH",
-        options: [
-          {
-            description: "A UUID or slug to identify the activity.",
-            in: "path",
-            name: "activity",
-            required: true,
-            type: "string",
-          },
-          {
-            description: "A UUID identifying the activity record to update.",
-            in: "path",
-            name: "record_id",
-            required: true,
-            type: "string",
-          },
-        ],
-      }),
-      "update-an-activity-record-overwrite-multiselect-values": operation({
-        body: "required",
-        call: putV2ActivitiesByActivityRecordsByRecordId,
-        description: "Update an activity record (overwrite multiselect values)",
-        example: [
-          "--activity",
-          "phone_calls",
-          "--record-id",
-          "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26",
-          "--body",
-          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
-        ],
-        method: "PUT",
-        options: [
-          {
-            description: "A UUID or slug to identify the activity.",
-            in: "path",
-            name: "activity",
-            required: true,
-            type: "string",
-          },
-          {
-            description: "A UUID identifying the activity record to update.",
-            in: "path",
-            name: "record_id",
-            required: true,
-            type: "string",
-          },
-        ],
-      }),
-    },
-    description: "",
+    description:
+      "Activities model event-based data that can be logged against a record, for example a phone call.",
   },
   attributes: {
     commands: {
@@ -515,14 +322,15 @@ export const groups = {
         method: "GET",
         options: [
           {
-            description: "Whether the attributes are on an object or a list.",
+            description: "Whether the attributes are on an object, a list or an activity.",
             in: "path",
             name: "target",
             required: true,
             type: "string",
           },
           {
-            description: "A UUID or slug to identify the object or list the attributes belong to.",
+            description:
+              "A UUID or slug to identify the object, list or activity the attributes belong to.",
             in: "path",
             name: "identifier",
             required: true,
@@ -569,14 +377,16 @@ export const groups = {
         method: "POST",
         options: [
           {
-            description: "Whether the attribute is to be created on an object or a list.",
+            description:
+              "Whether the attribute is to be created on an object, a list or an activity.",
             in: "path",
             name: "target",
             required: true,
             type: "string",
           },
           {
-            description: "A UUID or slug to identify the object or list the attribute belongs to.",
+            description:
+              "A UUID or slug to identify the object, list or activity the attribute belongs to.",
             in: "path",
             name: "identifier",
             required: true,
@@ -599,14 +409,15 @@ export const groups = {
         method: "GET",
         options: [
           {
-            description: "Whether the attribute is on an object or a list.",
+            description: "Whether the attribute is on an object, a list or an activity.",
             in: "path",
             name: "target",
             required: true,
             type: "string",
           },
           {
-            description: "A UUID or slug to identify the object or list the attribute belongs to.",
+            description:
+              "A UUID or slug to identify the object, list or activity the attribute belongs to.",
             in: "path",
             name: "identifier",
             required: true,
@@ -638,14 +449,15 @@ export const groups = {
         method: "PATCH",
         options: [
           {
-            description: "Whether the attribute is on an object or a list.",
+            description: "Whether the attribute is on an object, a list or an activity.",
             in: "path",
             name: "target",
             required: true,
             type: "string",
           },
           {
-            description: "A UUID or slug to identify the object or list the attribute belongs to.",
+            description:
+              "A UUID or slug to identify the object, list or activity the attribute belongs to.",
             in: "path",
             name: "identifier",
             required: true,
@@ -675,7 +487,7 @@ export const groups = {
         method: "GET",
         options: [
           {
-            description: "Whether the attribute is on an object or a list.",
+            description: "Whether the attribute is on an object, a list or an activity.",
             in: "path",
             name: "target",
             required: true,
@@ -683,7 +495,7 @@ export const groups = {
           },
           {
             description:
-              "A UUID or slug to identify the object or list the select attribute belongs to.",
+              "A UUID or slug to identify the object, list or activity the select attribute belongs to.",
             in: "path",
             name: "identifier",
             required: true,
@@ -723,7 +535,7 @@ export const groups = {
         method: "POST",
         options: [
           {
-            description: "Whether the attribute is on an object or a list.",
+            description: "Whether the attribute is on an object, a list or an activity.",
             in: "path",
             name: "target",
             required: true,
@@ -731,7 +543,7 @@ export const groups = {
           },
           {
             description:
-              "A UUID or slug to identify the object or list the select attribute belongs to.",
+              "A UUID or slug to identify the object, list or activity the select attribute belongs to.",
             in: "path",
             name: "identifier",
             required: true,
@@ -765,7 +577,7 @@ export const groups = {
         method: "PATCH",
         options: [
           {
-            description: "Whether the attribute is on an object or a list.",
+            description: "Whether the attribute is on an object, a list or an activity.",
             in: "path",
             name: "target",
             required: true,
@@ -773,7 +585,7 @@ export const groups = {
           },
           {
             description:
-              "A UUID or slug to identify the object or list the select attribute belongs to.",
+              "A UUID or slug to identify the object, list or activity the select attribute belongs to.",
             in: "path",
             name: "identifier",
             required: true,
@@ -932,7 +744,7 @@ export const groups = {
         ],
       }),
     },
-    description: "Attributes model properties of objects and lists.",
+    description: "Attributes model properties of objects, lists and activities.",
   },
   records: {
     commands: {
@@ -944,7 +756,7 @@ export const groups = {
           "--object",
           "people",
           "--body",
-          '{"filter":{"name":"Ada Lovelace"},"filter_view_id":"938f473e-e354-4f94-89f5-fe59b0dad987","sorts":[{"direction":"asc","attribute":"name","field":"last_name"}],"limit":500,"offset":0}',
+          '{"filter":{"name":"Ada Lovelace"},"sorts":[{"direction":"asc","attribute":"name","field":"last_name"}],"limit":500,"offset":0}',
         ],
         method: "POST",
         options: [
@@ -965,7 +777,7 @@ export const groups = {
           "--object",
           "people",
           "--body",
-          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+          '{"data":{"values":{"name":"Alice Adams","email_addresses":["alice@app.attio.com"]}}}',
         ],
         method: "POST",
         options: [
@@ -989,7 +801,7 @@ export const groups = {
           "--matching-attribute",
           "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
           "--body",
-          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+          '{"data":{"values":{"name":"Alice Adams","email_addresses":["alice@app.attio.com"]}}}',
         ],
         method: "PUT",
         options: [
@@ -1002,7 +814,7 @@ export const groups = {
           },
           {
             description:
-              "The ID or slug of the attribute to use to check if a record already exists. The attribute must be unique.",
+              "The ID or slug of the attribute to use to check if a record already exists. The attribute does not have to be unique, but a value that matches more than one record is rejected. We recommend a unique attribute, such as a domain, an email address or an ID from your own system.",
             in: "query",
             name: "matching_attribute",
             required: true,
@@ -1066,7 +878,7 @@ export const groups = {
           "--record-id",
           "891dcbfc-9141-415d-9b2a-2238a6cc012d",
           "--body",
-          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+          '{"data":{"values":{"name":"Alice Adams","email_addresses":["alice@app.attio.com"]}}}',
         ],
         method: "PATCH",
         options: [
@@ -1096,7 +908,7 @@ export const groups = {
           "--record-id",
           "891dcbfc-9141-415d-9b2a-2238a6cc012d",
           "--body",
-          '{"data":{"values":{"41252299-f8c7-4b5e-99c9-4ff8321d2f96":"Text value","multiselect_attribute":["Select option 1","Select option 2"]}}}',
+          '{"data":{"values":{"name":"Alice Adams","email_addresses":["alice@app.attio.com"]}}}',
         ],
         method: "PUT",
         options: [
@@ -1290,6 +1102,201 @@ export const groups = {
     },
     description: "Records are individual instances of objects e.g. a specific person or company.",
   },
+  "activity-records": {
+    commands: {
+      "list-activity-records": operation({
+        body: "required",
+        call: postV2ActivitiesByActivityRecordsQuery,
+        description: "List activity records",
+        example: [
+          "--activity",
+          "phone_calls",
+          "--body",
+          '{"filter":{"direction":"Outbound"},"sorts":[{"direction":"desc","attribute":"timestamp"}],"limit":500,"offset":0}',
+        ],
+        method: "POST",
+        options: [
+          {
+            description: "A UUID or slug to identify the activity.",
+            in: "path",
+            name: "activity",
+            required: true,
+            type: "string",
+          },
+        ],
+      }),
+      "create-an-activity-record": operation({
+        body: "required",
+        call: postV2ActivitiesByActivityRecords,
+        description: "Create an activity record",
+        example: [
+          "--activity",
+          "phone_calls",
+          "--body",
+          '{"data":{"values":{"direction":"Outbound"}}}',
+        ],
+        method: "POST",
+        options: [
+          {
+            description: "A UUID or slug to identify the activity.",
+            in: "path",
+            name: "activity",
+            required: true,
+            type: "string",
+          },
+        ],
+      }),
+      "upsert-an-activity-record": operation({
+        body: "required",
+        call: putV2ActivitiesByActivityRecords,
+        description: "Upsert an activity record",
+        example: [
+          "--activity",
+          "phone_calls",
+          "--matching-attribute",
+          "41252299-f8c7-4b5e-99c9-4ff8321d2f96",
+          "--body",
+          '{"data":{"values":{"direction":"Outbound"}}}',
+        ],
+        method: "PUT",
+        options: [
+          {
+            description: "A UUID or slug to identify the activity.",
+            in: "path",
+            name: "activity",
+            required: true,
+            type: "string",
+          },
+          {
+            description:
+              "The ID or slug of the attribute to use to check if an activity record already exists. The attribute does not have to be unique, but a value that matches more than one record is rejected. We recommend a unique attribute, such as a domain, an email address or an ID from your own system.",
+            in: "query",
+            name: "matching_attribute",
+            required: true,
+            type: "string",
+          },
+        ],
+      }),
+      "delete-an-activity-record": operation({
+        body: "none",
+        call: deleteV2ActivitiesByActivityRecordsByRecordId,
+        description: "Delete an activity record",
+        example: [
+          "--activity",
+          "phone_calls",
+          "--record-id",
+          "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26",
+        ],
+        method: "DELETE",
+        options: [
+          {
+            description: "A UUID or slug to identify the activity.",
+            in: "path",
+            name: "activity",
+            required: true,
+            type: "string",
+          },
+          {
+            description: "A UUID identifying the activity record to delete.",
+            in: "path",
+            name: "record_id",
+            required: true,
+            type: "string",
+          },
+        ],
+      }),
+      "get-an-activity-record": operation({
+        body: "none",
+        call: getV2ActivitiesByActivityRecordsByRecordId,
+        description: "Get an activity record",
+        example: [
+          "--activity",
+          "phone_calls",
+          "--record-id",
+          "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26",
+        ],
+        method: "GET",
+        options: [
+          {
+            description: "A UUID or slug to identify the activity.",
+            in: "path",
+            name: "activity",
+            required: true,
+            type: "string",
+          },
+          {
+            description: "A UUID identifying the activity record.",
+            in: "path",
+            name: "record_id",
+            required: true,
+            type: "string",
+          },
+        ],
+      }),
+      "update-an-activity-record-append-multiselect-values": operation({
+        body: "required",
+        call: patchV2ActivitiesByActivityRecordsByRecordId,
+        description: "Update an activity record (append multiselect values)",
+        example: [
+          "--activity",
+          "phone_calls",
+          "--record-id",
+          "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26",
+          "--body",
+          '{"data":{"values":{"direction":"Outbound"}}}',
+        ],
+        method: "PATCH",
+        options: [
+          {
+            description: "A UUID or slug to identify the activity.",
+            in: "path",
+            name: "activity",
+            required: true,
+            type: "string",
+          },
+          {
+            description: "A UUID identifying the activity record to update.",
+            in: "path",
+            name: "record_id",
+            required: true,
+            type: "string",
+          },
+        ],
+      }),
+      "update-an-activity-record-overwrite-multiselect-values": operation({
+        body: "required",
+        call: putV2ActivitiesByActivityRecordsByRecordId,
+        description: "Update an activity record (overwrite multiselect values)",
+        example: [
+          "--activity",
+          "phone_calls",
+          "--record-id",
+          "5f4f2d9c-2b3e-4a83-9c76-1de3a3f14f26",
+          "--body",
+          '{"data":{"values":{"direction":"Outbound"}}}',
+        ],
+        method: "PUT",
+        options: [
+          {
+            description: "A UUID or slug to identify the activity.",
+            in: "path",
+            name: "activity",
+            required: true,
+            type: "string",
+          },
+          {
+            description: "A UUID identifying the activity record to update.",
+            in: "path",
+            name: "record_id",
+            required: true,
+            type: "string",
+          },
+        ],
+      }),
+    },
+    description:
+      "Activity records are individual instances of activities, for example one specific phone call.",
+  },
   sql: {
     commands: {
       "query-sql": operation({
@@ -1298,7 +1305,7 @@ export const groups = {
         description: "Query SQL",
         example: [
           "--body",
-          '{"sql":"SELECT * FROM companies WHERE companies.name = \'Fundstack\'"}',
+          '{"sql":"SELECT * FROM companies WHERE (name = $name OR name = ANY($names)) AND created_at >= $since","parameters":{"name":{"type":"string","value":"Fundstack"},"since":{"type":"timestamp","value":"2023-01-01T15:00:00.000000000Z"},"names":{"type":"list","item_type":"string","value":["Fundstack","Acme"]}}}',
         ],
         method: "POST",
         options: [],
@@ -1417,7 +1424,7 @@ export const groups = {
           "--list",
           "33ebdbe9-e529-47c9-b894-0ba25e9c15c0",
           "--body",
-          '{"filter":{"name":"Ada Lovelace"},"filter_view_id":"938f473e-e354-4f94-89f5-fe59b0dad987","sorts":[{"direction":"asc","attribute":"name","field":"last_name"}],"limit":500,"offset":0}',
+          '{"filter":{"name":"Ada Lovelace"},"sorts":[{"direction":"asc","attribute":"name","field":"last_name"}],"limit":500,"offset":0}',
         ],
         method: "POST",
         options: [

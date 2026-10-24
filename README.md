@@ -46,7 +46,7 @@ attio-api records --help
 attio-api records upsert-a-record --help
 ```
 
-Path and query parameters are options; a boolean one is sent as false with `--no-<option>`. Operations that take a request body accept it as JSON through `--body`. A command's `--help` shows an example built from the samples in Attio's schema and links the page that documents the body:
+Path and query parameters are options; a boolean one is sent as false with `--no-<option>`. Operations that take a request body accept it as JSON through `--body`. A command's `--help` shows an example from Attio's documented request examples, falling back to schema samples, and links the page that documents the body:
 
 ```sh
 attio-api objects list-objects
@@ -63,10 +63,12 @@ attio-api notes create-a-note --body "$(cat note.json)"
 
 The body is the request body Attio documents for the operation, unchanged. Each command performs one operation and prints its response; to read a further page, pass the `offset` or `cursor` the operation documents.
 
+Examples contain sample values; supply any required attributes for your target. Creating an [activity record](https://docs.attio.com/rest-api/guides/activities) requires `data.values.timestamp` in ISO 8601 format. [Record references](https://docs.attio.com/rest-api/guides/linking-referenced-records), including `target_record_reference`, are passed through unchanged in `--body`.
+
 A delete command takes `--dry-run`, which prints the request and sends nothing:
 
 ```sh
-attio-api records delete-a-record --object companies --record-id <record-id> --dry-run
+attio-api records delete-a-record --object companies --record-id '<record-id>' --dry-run
 ```
 
 Two operations have no command: uploading a file, which takes a multipart body, and downloading a file, which answers with a redirect.

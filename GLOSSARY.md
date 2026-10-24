@@ -5,7 +5,7 @@ This project exposes the operations of the Attio API as commands. Terms follow A
 ## Workspace data
 
 **Workspace**:
-An organization's Attio account, holding its Objects, Lists, and Workspace Members.
+An organization's Attio account, holding its Objects, Activities, Lists, and Workspace Members.
 _Avoid_: Organization, tenant, account
 
 **Workspace Member**:
@@ -20,12 +20,20 @@ _Avoid_: Table, entity, model
 One instance of an Object.
 _Avoid_: Row, item
 
+**Activity**:
+A kind of event a Workspace logs against Records, such as a phone call.
+_Avoid_: Event type
+
+**Activity Record**:
+One logged event of an Activity.
+_Avoid_: Record, Entry
+
 **Attribute**:
-A named, typed property defined on an Object or a List.
+A named, typed property defined on an Object, a List, or an Activity.
 _Avoid_: Field, column, property
 
 **Attribute Value**:
-What a Record or an Entry holds for an Attribute, together with the period during which it held it.
+What a Record, an Activity Record, or an Entry holds for an Attribute, together with the period during which it held it.
 _Avoid_: Field value
 
 **Select Option**:

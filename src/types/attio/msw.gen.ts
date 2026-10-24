@@ -620,336 +620,6 @@ export function handlePatchV2ActivitiesByActivity(
   );
 }
 
-export type HandlePostV2ActivitiesByActivityRecordsQueryResponse = {
-  body: PostV2ActivitiesByActivityRecordsQueryResponses[200];
-  status?: 200;
-};
-
-/**
- * Handler for the `POST /v2/activities/{activity}/records/query` operation.
- */
-export function handlePostV2ActivitiesByActivityRecordsQuery(
-  response?:
-    | HandlePostV2ActivitiesByActivityRecordsQueryResponse
-    | HttpResponseResolver<
-        {
-          activity: string;
-        },
-        PostV2ActivitiesByActivityRecordsQueryData["body"]
-      >,
-  options?: RequestHandlerOptions,
-): HttpHandler {
-  return http.post<
-    {
-      activity: string;
-    },
-    PostV2ActivitiesByActivityRecordsQueryData["body"]
-  >(
-    `${options?.baseUrl ?? "https://api.attio.com"}/v2/activities/:activity/records/query`,
-    (info) => {
-      if (typeof response === "function") {
-        return response(info);
-      }
-      const body = response?.body;
-      if (body !== undefined) {
-        return HttpResponse.json(body, { status: response?.status ?? 200 });
-      }
-      if (options?.responseFallback === "passthrough") {
-        return;
-      }
-      return new Response("Not Implemented", {
-        status: 501,
-        statusText: "Not Implemented",
-      });
-    },
-    options,
-  );
-}
-
-export type HandlePostV2ActivitiesByActivityRecordsResponse = {
-  body: PostV2ActivitiesByActivityRecordsResponses[200];
-  status?: 200;
-};
-
-/**
- * Handler for the `POST /v2/activities/{activity}/records` operation.
- */
-export function handlePostV2ActivitiesByActivityRecords(
-  response?:
-    | HandlePostV2ActivitiesByActivityRecordsResponse
-    | HttpResponseResolver<
-        {
-          activity: string;
-        },
-        PostV2ActivitiesByActivityRecordsData["body"]
-      >,
-  options?: RequestHandlerOptions,
-): HttpHandler {
-  return http.post<
-    {
-      activity: string;
-    },
-    PostV2ActivitiesByActivityRecordsData["body"]
-  >(
-    `${options?.baseUrl ?? "https://api.attio.com"}/v2/activities/:activity/records`,
-    (info) => {
-      if (typeof response === "function") {
-        return response(info);
-      }
-      const body = response?.body;
-      if (body !== undefined) {
-        return HttpResponse.json(body, { status: response?.status ?? 200 });
-      }
-      if (options?.responseFallback === "passthrough") {
-        return;
-      }
-      return new Response("Not Implemented", {
-        status: 501,
-        statusText: "Not Implemented",
-      });
-    },
-    options,
-  );
-}
-
-export type HandlePutV2ActivitiesByActivityRecordsResponse = {
-  body: PutV2ActivitiesByActivityRecordsResponses[200];
-  status?: 200;
-};
-
-/**
- * Handler for the `PUT /v2/activities/{activity}/records` operation.
- */
-export function handlePutV2ActivitiesByActivityRecords(
-  response?:
-    | HandlePutV2ActivitiesByActivityRecordsResponse
-    | HttpResponseResolver<
-        {
-          activity: string;
-        },
-        PutV2ActivitiesByActivityRecordsData["body"]
-      >,
-  options?: RequestHandlerOptions,
-): HttpHandler {
-  return http.put<
-    {
-      activity: string;
-    },
-    PutV2ActivitiesByActivityRecordsData["body"]
-  >(
-    `${options?.baseUrl ?? "https://api.attio.com"}/v2/activities/:activity/records`,
-    (info) => {
-      if (typeof response === "function") {
-        return response(info);
-      }
-      const body = response?.body;
-      if (body !== undefined) {
-        return HttpResponse.json(body, { status: response?.status ?? 200 });
-      }
-      if (options?.responseFallback === "passthrough") {
-        return;
-      }
-      return new Response("Not Implemented", {
-        status: 501,
-        statusText: "Not Implemented",
-      });
-    },
-    options,
-  );
-}
-
-export type HandleDeleteV2ActivitiesByActivityRecordsByRecordIdResponse = {
-  body: DeleteV2ActivitiesByActivityRecordsByRecordIdResponses[200];
-  status?: 200;
-};
-
-/**
- * Handler for the `DELETE /v2/activities/{activity}/records/{record_id}` operation.
- */
-export function handleDeleteV2ActivitiesByActivityRecordsByRecordId(
-  response?:
-    | HandleDeleteV2ActivitiesByActivityRecordsByRecordIdResponse
-    | HttpResponseResolver<
-        {
-          activity: string;
-          record_id: string;
-        },
-        never
-      >,
-  options?: RequestHandlerOptions,
-): HttpHandler {
-  return http.delete<
-    {
-      activity: string;
-      record_id: string;
-    },
-    never
-  >(
-    `${options?.baseUrl ?? "https://api.attio.com"}/v2/activities/:activity/records/:record_id`,
-    (info) => {
-      if (typeof response === "function") {
-        return response(info);
-      }
-      const body = response?.body;
-      if (body !== undefined) {
-        return HttpResponse.json(body, { status: response?.status ?? 200 });
-      }
-      if (options?.responseFallback === "passthrough") {
-        return;
-      }
-      return new Response("Not Implemented", {
-        status: 501,
-        statusText: "Not Implemented",
-      });
-    },
-    options,
-  );
-}
-
-export type HandleGetV2ActivitiesByActivityRecordsByRecordIdResponse = {
-  body: GetV2ActivitiesByActivityRecordsByRecordIdResponses[200];
-  status?: 200;
-};
-
-/**
- * Handler for the `GET /v2/activities/{activity}/records/{record_id}` operation.
- */
-export function handleGetV2ActivitiesByActivityRecordsByRecordId(
-  response?:
-    | HandleGetV2ActivitiesByActivityRecordsByRecordIdResponse
-    | HttpResponseResolver<
-        {
-          activity: string;
-          record_id: string;
-        },
-        never
-      >,
-  options?: RequestHandlerOptions,
-): HttpHandler {
-  return http.get<
-    {
-      activity: string;
-      record_id: string;
-    },
-    never
-  >(
-    `${options?.baseUrl ?? "https://api.attio.com"}/v2/activities/:activity/records/:record_id`,
-    (info) => {
-      if (typeof response === "function") {
-        return response(info);
-      }
-      const body = response?.body;
-      if (body !== undefined) {
-        return HttpResponse.json(body, { status: response?.status ?? 200 });
-      }
-      if (options?.responseFallback === "passthrough") {
-        return;
-      }
-      return new Response("Not Implemented", {
-        status: 501,
-        statusText: "Not Implemented",
-      });
-    },
-    options,
-  );
-}
-
-export type HandlePatchV2ActivitiesByActivityRecordsByRecordIdResponse = {
-  body: PatchV2ActivitiesByActivityRecordsByRecordIdResponses[200];
-  status?: 200;
-};
-
-/**
- * Handler for the `PATCH /v2/activities/{activity}/records/{record_id}` operation.
- */
-export function handlePatchV2ActivitiesByActivityRecordsByRecordId(
-  response?:
-    | HandlePatchV2ActivitiesByActivityRecordsByRecordIdResponse
-    | HttpResponseResolver<
-        {
-          activity: string;
-          record_id: string;
-        },
-        PatchV2ActivitiesByActivityRecordsByRecordIdData["body"]
-      >,
-  options?: RequestHandlerOptions,
-): HttpHandler {
-  return http.patch<
-    {
-      activity: string;
-      record_id: string;
-    },
-    PatchV2ActivitiesByActivityRecordsByRecordIdData["body"]
-  >(
-    `${options?.baseUrl ?? "https://api.attio.com"}/v2/activities/:activity/records/:record_id`,
-    (info) => {
-      if (typeof response === "function") {
-        return response(info);
-      }
-      const body = response?.body;
-      if (body !== undefined) {
-        return HttpResponse.json(body, { status: response?.status ?? 200 });
-      }
-      if (options?.responseFallback === "passthrough") {
-        return;
-      }
-      return new Response("Not Implemented", {
-        status: 501,
-        statusText: "Not Implemented",
-      });
-    },
-    options,
-  );
-}
-
-export type HandlePutV2ActivitiesByActivityRecordsByRecordIdResponse = {
-  body: PutV2ActivitiesByActivityRecordsByRecordIdResponses[200];
-  status?: 200;
-};
-
-/**
- * Handler for the `PUT /v2/activities/{activity}/records/{record_id}` operation.
- */
-export function handlePutV2ActivitiesByActivityRecordsByRecordId(
-  response?:
-    | HandlePutV2ActivitiesByActivityRecordsByRecordIdResponse
-    | HttpResponseResolver<
-        {
-          activity: string;
-          record_id: string;
-        },
-        PutV2ActivitiesByActivityRecordsByRecordIdData["body"]
-      >,
-  options?: RequestHandlerOptions,
-): HttpHandler {
-  return http.put<
-    {
-      activity: string;
-      record_id: string;
-    },
-    PutV2ActivitiesByActivityRecordsByRecordIdData["body"]
-  >(
-    `${options?.baseUrl ?? "https://api.attio.com"}/v2/activities/:activity/records/:record_id`,
-    (info) => {
-      if (typeof response === "function") {
-        return response(info);
-      }
-      const body = response?.body;
-      if (body !== undefined) {
-        return HttpResponse.json(body, { status: response?.status ?? 200 });
-      }
-      if (options?.responseFallback === "passthrough") {
-        return;
-      }
-      return new Response("Not Implemented", {
-        status: 501,
-        statusText: "Not Implemented",
-      });
-    },
-    options,
-  );
-}
-
 export type HandleGetV2ByTargetByIdentifierAttributesResponse = {
   body: GetV2ByTargetByIdentifierAttributesResponses[200];
   status?: 200;
@@ -1998,6 +1668,336 @@ export function handlePostV2ObjectsRecordsSearch(
 ): HttpHandler {
   return http.post<never, PostV2ObjectsRecordsSearchData["body"]>(
     `${options?.baseUrl ?? "https://api.attio.com"}/v2/objects/records/search`,
+    (info) => {
+      if (typeof response === "function") {
+        return response(info);
+      }
+      const body = response?.body;
+      if (body !== undefined) {
+        return HttpResponse.json(body, { status: response?.status ?? 200 });
+      }
+      if (options?.responseFallback === "passthrough") {
+        return;
+      }
+      return new Response("Not Implemented", {
+        status: 501,
+        statusText: "Not Implemented",
+      });
+    },
+    options,
+  );
+}
+
+export type HandlePostV2ActivitiesByActivityRecordsQueryResponse = {
+  body: PostV2ActivitiesByActivityRecordsQueryResponses[200];
+  status?: 200;
+};
+
+/**
+ * Handler for the `POST /v2/activities/{activity}/records/query` operation.
+ */
+export function handlePostV2ActivitiesByActivityRecordsQuery(
+  response?:
+    | HandlePostV2ActivitiesByActivityRecordsQueryResponse
+    | HttpResponseResolver<
+        {
+          activity: string;
+        },
+        PostV2ActivitiesByActivityRecordsQueryData["body"]
+      >,
+  options?: RequestHandlerOptions,
+): HttpHandler {
+  return http.post<
+    {
+      activity: string;
+    },
+    PostV2ActivitiesByActivityRecordsQueryData["body"]
+  >(
+    `${options?.baseUrl ?? "https://api.attio.com"}/v2/activities/:activity/records/query`,
+    (info) => {
+      if (typeof response === "function") {
+        return response(info);
+      }
+      const body = response?.body;
+      if (body !== undefined) {
+        return HttpResponse.json(body, { status: response?.status ?? 200 });
+      }
+      if (options?.responseFallback === "passthrough") {
+        return;
+      }
+      return new Response("Not Implemented", {
+        status: 501,
+        statusText: "Not Implemented",
+      });
+    },
+    options,
+  );
+}
+
+export type HandlePostV2ActivitiesByActivityRecordsResponse = {
+  body: PostV2ActivitiesByActivityRecordsResponses[200];
+  status?: 200;
+};
+
+/**
+ * Handler for the `POST /v2/activities/{activity}/records` operation.
+ */
+export function handlePostV2ActivitiesByActivityRecords(
+  response?:
+    | HandlePostV2ActivitiesByActivityRecordsResponse
+    | HttpResponseResolver<
+        {
+          activity: string;
+        },
+        PostV2ActivitiesByActivityRecordsData["body"]
+      >,
+  options?: RequestHandlerOptions,
+): HttpHandler {
+  return http.post<
+    {
+      activity: string;
+    },
+    PostV2ActivitiesByActivityRecordsData["body"]
+  >(
+    `${options?.baseUrl ?? "https://api.attio.com"}/v2/activities/:activity/records`,
+    (info) => {
+      if (typeof response === "function") {
+        return response(info);
+      }
+      const body = response?.body;
+      if (body !== undefined) {
+        return HttpResponse.json(body, { status: response?.status ?? 200 });
+      }
+      if (options?.responseFallback === "passthrough") {
+        return;
+      }
+      return new Response("Not Implemented", {
+        status: 501,
+        statusText: "Not Implemented",
+      });
+    },
+    options,
+  );
+}
+
+export type HandlePutV2ActivitiesByActivityRecordsResponse = {
+  body: PutV2ActivitiesByActivityRecordsResponses[200];
+  status?: 200;
+};
+
+/**
+ * Handler for the `PUT /v2/activities/{activity}/records` operation.
+ */
+export function handlePutV2ActivitiesByActivityRecords(
+  response?:
+    | HandlePutV2ActivitiesByActivityRecordsResponse
+    | HttpResponseResolver<
+        {
+          activity: string;
+        },
+        PutV2ActivitiesByActivityRecordsData["body"]
+      >,
+  options?: RequestHandlerOptions,
+): HttpHandler {
+  return http.put<
+    {
+      activity: string;
+    },
+    PutV2ActivitiesByActivityRecordsData["body"]
+  >(
+    `${options?.baseUrl ?? "https://api.attio.com"}/v2/activities/:activity/records`,
+    (info) => {
+      if (typeof response === "function") {
+        return response(info);
+      }
+      const body = response?.body;
+      if (body !== undefined) {
+        return HttpResponse.json(body, { status: response?.status ?? 200 });
+      }
+      if (options?.responseFallback === "passthrough") {
+        return;
+      }
+      return new Response("Not Implemented", {
+        status: 501,
+        statusText: "Not Implemented",
+      });
+    },
+    options,
+  );
+}
+
+export type HandleDeleteV2ActivitiesByActivityRecordsByRecordIdResponse = {
+  body: DeleteV2ActivitiesByActivityRecordsByRecordIdResponses[200];
+  status?: 200;
+};
+
+/**
+ * Handler for the `DELETE /v2/activities/{activity}/records/{record_id}` operation.
+ */
+export function handleDeleteV2ActivitiesByActivityRecordsByRecordId(
+  response?:
+    | HandleDeleteV2ActivitiesByActivityRecordsByRecordIdResponse
+    | HttpResponseResolver<
+        {
+          activity: string;
+          record_id: string;
+        },
+        never
+      >,
+  options?: RequestHandlerOptions,
+): HttpHandler {
+  return http.delete<
+    {
+      activity: string;
+      record_id: string;
+    },
+    never
+  >(
+    `${options?.baseUrl ?? "https://api.attio.com"}/v2/activities/:activity/records/:record_id`,
+    (info) => {
+      if (typeof response === "function") {
+        return response(info);
+      }
+      const body = response?.body;
+      if (body !== undefined) {
+        return HttpResponse.json(body, { status: response?.status ?? 200 });
+      }
+      if (options?.responseFallback === "passthrough") {
+        return;
+      }
+      return new Response("Not Implemented", {
+        status: 501,
+        statusText: "Not Implemented",
+      });
+    },
+    options,
+  );
+}
+
+export type HandleGetV2ActivitiesByActivityRecordsByRecordIdResponse = {
+  body: GetV2ActivitiesByActivityRecordsByRecordIdResponses[200];
+  status?: 200;
+};
+
+/**
+ * Handler for the `GET /v2/activities/{activity}/records/{record_id}` operation.
+ */
+export function handleGetV2ActivitiesByActivityRecordsByRecordId(
+  response?:
+    | HandleGetV2ActivitiesByActivityRecordsByRecordIdResponse
+    | HttpResponseResolver<
+        {
+          activity: string;
+          record_id: string;
+        },
+        never
+      >,
+  options?: RequestHandlerOptions,
+): HttpHandler {
+  return http.get<
+    {
+      activity: string;
+      record_id: string;
+    },
+    never
+  >(
+    `${options?.baseUrl ?? "https://api.attio.com"}/v2/activities/:activity/records/:record_id`,
+    (info) => {
+      if (typeof response === "function") {
+        return response(info);
+      }
+      const body = response?.body;
+      if (body !== undefined) {
+        return HttpResponse.json(body, { status: response?.status ?? 200 });
+      }
+      if (options?.responseFallback === "passthrough") {
+        return;
+      }
+      return new Response("Not Implemented", {
+        status: 501,
+        statusText: "Not Implemented",
+      });
+    },
+    options,
+  );
+}
+
+export type HandlePatchV2ActivitiesByActivityRecordsByRecordIdResponse = {
+  body: PatchV2ActivitiesByActivityRecordsByRecordIdResponses[200];
+  status?: 200;
+};
+
+/**
+ * Handler for the `PATCH /v2/activities/{activity}/records/{record_id}` operation.
+ */
+export function handlePatchV2ActivitiesByActivityRecordsByRecordId(
+  response?:
+    | HandlePatchV2ActivitiesByActivityRecordsByRecordIdResponse
+    | HttpResponseResolver<
+        {
+          activity: string;
+          record_id: string;
+        },
+        PatchV2ActivitiesByActivityRecordsByRecordIdData["body"]
+      >,
+  options?: RequestHandlerOptions,
+): HttpHandler {
+  return http.patch<
+    {
+      activity: string;
+      record_id: string;
+    },
+    PatchV2ActivitiesByActivityRecordsByRecordIdData["body"]
+  >(
+    `${options?.baseUrl ?? "https://api.attio.com"}/v2/activities/:activity/records/:record_id`,
+    (info) => {
+      if (typeof response === "function") {
+        return response(info);
+      }
+      const body = response?.body;
+      if (body !== undefined) {
+        return HttpResponse.json(body, { status: response?.status ?? 200 });
+      }
+      if (options?.responseFallback === "passthrough") {
+        return;
+      }
+      return new Response("Not Implemented", {
+        status: 501,
+        statusText: "Not Implemented",
+      });
+    },
+    options,
+  );
+}
+
+export type HandlePutV2ActivitiesByActivityRecordsByRecordIdResponse = {
+  body: PutV2ActivitiesByActivityRecordsByRecordIdResponses[200];
+  status?: 200;
+};
+
+/**
+ * Handler for the `PUT /v2/activities/{activity}/records/{record_id}` operation.
+ */
+export function handlePutV2ActivitiesByActivityRecordsByRecordId(
+  response?:
+    | HandlePutV2ActivitiesByActivityRecordsByRecordIdResponse
+    | HttpResponseResolver<
+        {
+          activity: string;
+          record_id: string;
+        },
+        PutV2ActivitiesByActivityRecordsByRecordIdData["body"]
+      >,
+  options?: RequestHandlerOptions,
+): HttpHandler {
+  return http.put<
+    {
+      activity: string;
+      record_id: string;
+    },
+    PutV2ActivitiesByActivityRecordsByRecordIdData["body"]
+  >(
+    `${options?.baseUrl ?? "https://api.attio.com"}/v2/activities/:activity/records/:record_id`,
     (info) => {
       if (typeof response === "function") {
         return response(info);
@@ -4472,34 +4472,6 @@ export type MswHandlerFactories = {
    */
   patchV2ActivitiesByActivity: typeof handlePatchV2ActivitiesByActivity;
   /**
-   * Handler for the `POST /v2/activities/{activity}/records/query` operation.
-   */
-  postV2ActivitiesByActivityRecordsQuery: typeof handlePostV2ActivitiesByActivityRecordsQuery;
-  /**
-   * Handler for the `POST /v2/activities/{activity}/records` operation.
-   */
-  postV2ActivitiesByActivityRecords: typeof handlePostV2ActivitiesByActivityRecords;
-  /**
-   * Handler for the `PUT /v2/activities/{activity}/records` operation.
-   */
-  putV2ActivitiesByActivityRecords: typeof handlePutV2ActivitiesByActivityRecords;
-  /**
-   * Handler for the `DELETE /v2/activities/{activity}/records/{record_id}` operation.
-   */
-  deleteV2ActivitiesByActivityRecordsByRecordId: typeof handleDeleteV2ActivitiesByActivityRecordsByRecordId;
-  /**
-   * Handler for the `GET /v2/activities/{activity}/records/{record_id}` operation.
-   */
-  getV2ActivitiesByActivityRecordsByRecordId: typeof handleGetV2ActivitiesByActivityRecordsByRecordId;
-  /**
-   * Handler for the `PATCH /v2/activities/{activity}/records/{record_id}` operation.
-   */
-  patchV2ActivitiesByActivityRecordsByRecordId: typeof handlePatchV2ActivitiesByActivityRecordsByRecordId;
-  /**
-   * Handler for the `PUT /v2/activities/{activity}/records/{record_id}` operation.
-   */
-  putV2ActivitiesByActivityRecordsByRecordId: typeof handlePutV2ActivitiesByActivityRecordsByRecordId;
-  /**
    * Handler for the `GET /v2/{target}/{identifier}/attributes` operation.
    */
   getV2ByTargetByIdentifierAttributes: typeof handleGetV2ByTargetByIdentifierAttributes;
@@ -4587,6 +4559,34 @@ export type MswHandlerFactories = {
    * Handler for the `POST /v2/objects/records/search` operation.
    */
   postV2ObjectsRecordsSearch: typeof handlePostV2ObjectsRecordsSearch;
+  /**
+   * Handler for the `POST /v2/activities/{activity}/records/query` operation.
+   */
+  postV2ActivitiesByActivityRecordsQuery: typeof handlePostV2ActivitiesByActivityRecordsQuery;
+  /**
+   * Handler for the `POST /v2/activities/{activity}/records` operation.
+   */
+  postV2ActivitiesByActivityRecords: typeof handlePostV2ActivitiesByActivityRecords;
+  /**
+   * Handler for the `PUT /v2/activities/{activity}/records` operation.
+   */
+  putV2ActivitiesByActivityRecords: typeof handlePutV2ActivitiesByActivityRecords;
+  /**
+   * Handler for the `DELETE /v2/activities/{activity}/records/{record_id}` operation.
+   */
+  deleteV2ActivitiesByActivityRecordsByRecordId: typeof handleDeleteV2ActivitiesByActivityRecordsByRecordId;
+  /**
+   * Handler for the `GET /v2/activities/{activity}/records/{record_id}` operation.
+   */
+  getV2ActivitiesByActivityRecordsByRecordId: typeof handleGetV2ActivitiesByActivityRecordsByRecordId;
+  /**
+   * Handler for the `PATCH /v2/activities/{activity}/records/{record_id}` operation.
+   */
+  patchV2ActivitiesByActivityRecordsByRecordId: typeof handlePatchV2ActivitiesByActivityRecordsByRecordId;
+  /**
+   * Handler for the `PUT /v2/activities/{activity}/records/{record_id}` operation.
+   */
+  putV2ActivitiesByActivityRecordsByRecordId: typeof handlePutV2ActivitiesByActivityRecordsByRecordId;
   /**
    * Handler for the `POST /v2/sql` operation.
    */
@@ -4845,21 +4845,6 @@ export function createMswHandlers(config: RequestHandlerOptions = {}): CreateMsw
     deleteV2ActivitiesByActivity: wrap(handleDeleteV2ActivitiesByActivity),
     getV2ActivitiesByActivity: wrap(handleGetV2ActivitiesByActivity),
     patchV2ActivitiesByActivity: wrap(handlePatchV2ActivitiesByActivity),
-    postV2ActivitiesByActivityRecordsQuery: wrap(handlePostV2ActivitiesByActivityRecordsQuery),
-    postV2ActivitiesByActivityRecords: wrap(handlePostV2ActivitiesByActivityRecords),
-    putV2ActivitiesByActivityRecords: wrap(handlePutV2ActivitiesByActivityRecords),
-    deleteV2ActivitiesByActivityRecordsByRecordId: wrap(
-      handleDeleteV2ActivitiesByActivityRecordsByRecordId,
-    ),
-    getV2ActivitiesByActivityRecordsByRecordId: wrap(
-      handleGetV2ActivitiesByActivityRecordsByRecordId,
-    ),
-    patchV2ActivitiesByActivityRecordsByRecordId: wrap(
-      handlePatchV2ActivitiesByActivityRecordsByRecordId,
-    ),
-    putV2ActivitiesByActivityRecordsByRecordId: wrap(
-      handlePutV2ActivitiesByActivityRecordsByRecordId,
-    ),
     getV2ByTargetByIdentifierAttributes: wrap(handleGetV2ByTargetByIdentifierAttributes),
     postV2ByTargetByIdentifierAttributes: wrap(handlePostV2ByTargetByIdentifierAttributes),
     getV2ByTargetByIdentifierAttributesByAttribute: wrap(
@@ -4904,6 +4889,21 @@ export function createMswHandlers(config: RequestHandlerOptions = {}): CreateMsw
       handleGetV2ObjectsByObjectRecordsByRecordIdEntries,
     ),
     postV2ObjectsRecordsSearch: wrap(handlePostV2ObjectsRecordsSearch),
+    postV2ActivitiesByActivityRecordsQuery: wrap(handlePostV2ActivitiesByActivityRecordsQuery),
+    postV2ActivitiesByActivityRecords: wrap(handlePostV2ActivitiesByActivityRecords),
+    putV2ActivitiesByActivityRecords: wrap(handlePutV2ActivitiesByActivityRecords),
+    deleteV2ActivitiesByActivityRecordsByRecordId: wrap(
+      handleDeleteV2ActivitiesByActivityRecordsByRecordId,
+    ),
+    getV2ActivitiesByActivityRecordsByRecordId: wrap(
+      handleGetV2ActivitiesByActivityRecordsByRecordId,
+    ),
+    patchV2ActivitiesByActivityRecordsByRecordId: wrap(
+      handlePatchV2ActivitiesByActivityRecordsByRecordId,
+    ),
+    putV2ActivitiesByActivityRecordsByRecordId: wrap(
+      handlePutV2ActivitiesByActivityRecordsByRecordId,
+    ),
     postV2Sql: wrap(handlePostV2Sql),
     getV2Lists: wrap(handleGetV2Lists),
     postV2Lists: wrap(handlePostV2Lists),
@@ -5027,29 +5027,13 @@ export function createMswHandlers(config: RequestHandlerOptions = {}): CreateMsw
         pick.postV2ByTargetByIdentifierAttributesByAttributeStatuses,
         overrides.postV2ByTargetByIdentifierAttributesByAttributeStatuses,
       ),
+      invoke(pick.postV2ObjectsByObjectRecordsQuery, overrides.postV2ObjectsByObjectRecordsQuery),
+      invoke(pick.postV2ObjectsByObjectRecordsMerge, overrides.postV2ObjectsByObjectRecordsMerge),
       invoke(
         pick.postV2ActivitiesByActivityRecordsQuery,
         overrides.postV2ActivitiesByActivityRecordsQuery,
       ),
-      invoke(pick.postV2ObjectsByObjectRecordsQuery, overrides.postV2ObjectsByObjectRecordsQuery),
-      invoke(pick.postV2ObjectsByObjectRecordsMerge, overrides.postV2ObjectsByObjectRecordsMerge),
       invoke(pick.postV2ListsByListEntriesQuery, overrides.postV2ListsByListEntriesQuery),
-      invoke(
-        pick.deleteV2ActivitiesByActivityRecordsByRecordId,
-        overrides.deleteV2ActivitiesByActivityRecordsByRecordId,
-      ),
-      invoke(
-        pick.getV2ActivitiesByActivityRecordsByRecordId,
-        overrides.getV2ActivitiesByActivityRecordsByRecordId,
-      ),
-      invoke(
-        pick.patchV2ActivitiesByActivityRecordsByRecordId,
-        overrides.patchV2ActivitiesByActivityRecordsByRecordId,
-      ),
-      invoke(
-        pick.putV2ActivitiesByActivityRecordsByRecordId,
-        overrides.putV2ActivitiesByActivityRecordsByRecordId,
-      ),
       invoke(
         pick.deleteV2ObjectsByObjectRecordsByRecordId,
         overrides.deleteV2ObjectsByObjectRecordsByRecordId,
@@ -5065,6 +5049,22 @@ export function createMswHandlers(config: RequestHandlerOptions = {}): CreateMsw
       invoke(
         pick.putV2ObjectsByObjectRecordsByRecordId,
         overrides.putV2ObjectsByObjectRecordsByRecordId,
+      ),
+      invoke(
+        pick.deleteV2ActivitiesByActivityRecordsByRecordId,
+        overrides.deleteV2ActivitiesByActivityRecordsByRecordId,
+      ),
+      invoke(
+        pick.getV2ActivitiesByActivityRecordsByRecordId,
+        overrides.getV2ActivitiesByActivityRecordsByRecordId,
+      ),
+      invoke(
+        pick.patchV2ActivitiesByActivityRecordsByRecordId,
+        overrides.patchV2ActivitiesByActivityRecordsByRecordId,
+      ),
+      invoke(
+        pick.putV2ActivitiesByActivityRecordsByRecordId,
+        overrides.putV2ActivitiesByActivityRecordsByRecordId,
       ),
       invoke(
         pick.deleteV2ListsByListEntriesByEntryId,
@@ -5091,10 +5091,10 @@ export function createMswHandlers(config: RequestHandlerOptions = {}): CreateMsw
       ),
       invoke(pick.postV2ObjectsRecordsSearch, overrides.postV2ObjectsRecordsSearch),
       invoke(pick.getV2ObjectsByObjectViews, overrides.getV2ObjectsByObjectViews),
-      invoke(pick.postV2ActivitiesByActivityRecords, overrides.postV2ActivitiesByActivityRecords),
-      invoke(pick.putV2ActivitiesByActivityRecords, overrides.putV2ActivitiesByActivityRecords),
       invoke(pick.postV2ObjectsByObjectRecords, overrides.postV2ObjectsByObjectRecords),
       invoke(pick.putV2ObjectsByObjectRecords, overrides.putV2ObjectsByObjectRecords),
+      invoke(pick.postV2ActivitiesByActivityRecords, overrides.postV2ActivitiesByActivityRecords),
+      invoke(pick.putV2ActivitiesByActivityRecords, overrides.putV2ActivitiesByActivityRecords),
       invoke(pick.getV2ListsByListViews, overrides.getV2ListsByListViews),
       invoke(pick.postV2ListsByListEntries, overrides.postV2ListsByListEntries),
       invoke(pick.putV2ListsByListEntries, overrides.putV2ListsByListEntries),
