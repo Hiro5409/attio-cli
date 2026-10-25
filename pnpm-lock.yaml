@@ -188,22 +188,22 @@ importers:
         specifier: 0.0.0-next-20260930190945
         version: 0.0.0-next-20260930190945
       '@types/node':
-        specifier: ^26.6.5
+        specifier: 26.6.5
         version: 26.6.5
       knip:
-        specifier: ^6.42.1
+        specifier: 6.42.1
         version: 6.42.1
       msw:
-        specifier: ^3.0.2
+        specifier: 3.0.3
         version: 3.0.3(@types/node@26.6.5)(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.5)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(typescript@7.0.2)
       openapi-sampler:
         specifier: 1.7.9
         version: 1.7.9
       publint:
-        specifier: ^0.3.25
+        specifier: 0.3.25
         version: 0.3.25
       typescript:
-        specifier: ^7.0.2
+        specifier: 7.0.2
         version: 7.0.2
       vite:
         specifier: npm:@voidzero-dev/vite-plus-core@1.4.0
