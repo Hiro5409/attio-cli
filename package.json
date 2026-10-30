@@ -55,7 +55,7 @@
     "@hey-api/openapi-ts": "0.0.0-next-20260930190945",
     "@hey-api/shared": "0.0.0-next-20260930190945",
     "@types/node": "26.6.6",
-    "knip": "6.43.0",
+    "knip": "6.44.0",
     "msw": "3.0.3",
     "openapi-sampler": "1.7.9",
     "publint": "0.3.25",
