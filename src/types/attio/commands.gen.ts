@@ -14,6 +14,7 @@ import {
   deleteV2ObjectsByObjectRecordsByRecordId,
   deleteV2TasksByTaskId,
   deleteV2WebhooksByWebhookId,
+  deleteV2WorkspaceBlocklistAddressesByAddress,
   getV2Activities,
   getV2ActivitiesByActivity,
   getV2ActivitiesByActivityRecordsByRecordId,
@@ -50,6 +51,7 @@ import {
   getV2ThreadsByThreadId,
   getV2Webhooks,
   getV2WebhooksByWebhookId,
+  getV2WorkspaceBlocklistAddresses,
   getV2WorkspaceMembers,
   getV2WorkspaceMembersByWorkspaceMemberId,
   patchV2ActivitiesByActivity,
@@ -97,6 +99,7 @@ import {
   putV2ObjectsByObjectRecords,
   putV2ObjectsByObjectRecordsByRecordId,
   putV2ObjectsByObjectRecordsByRecordIdAttributesByAttributeValues,
+  putV2WorkspaceBlocklistAddresses,
 } from "./sdk.gen";
 
 export const groups = {
@@ -2218,6 +2221,64 @@ export const groups = {
       }),
     },
     description: "Sequences are automated email campaigns sent from Attio.",
+  },
+  "workspace-blocklist": {
+    commands: {
+      "list-workspace-blocklist-addresses": operation({
+        body: "none",
+        call: getV2WorkspaceBlocklistAddresses,
+        description: "List workspace blocklist addresses",
+        example: [],
+        method: "GET",
+        options: [
+          {
+            description:
+              "The maximum number of addresses to return. Must be between 1 and 500. Defaults to 500.",
+            in: "query",
+            name: "limit",
+            required: false,
+            type: "integer",
+          },
+          {
+            description:
+              "A pagination cursor used to fetch the next page of addresses. Responses with more addresses will include a cursor for you to use here. If not provided, the first page will be returned.",
+            in: "query",
+            name: "cursor",
+            required: false,
+            type: "string",
+          },
+        ],
+      }),
+      "add-or-update-workspace-blocklist-addresses": operation({
+        body: "required",
+        call: putV2WorkspaceBlocklistAddresses,
+        description: "Add or update workspace blocklist addresses",
+        example: [
+          "--body",
+          '{"data":{"addresses":[{"address":"lists@acme.com","enforcement_level":"blocked"},{"address":"https://www.newsletter.example.com","enforcement_level":"blocked"},{"address":"jane@acme.com","enforcement_level":"protected"}]}}',
+        ],
+        method: "PUT",
+        options: [],
+      }),
+      "delete-a-workspace-blocklist-address": operation({
+        body: "none",
+        call: deleteV2WorkspaceBlocklistAddressesByAddress,
+        description: "Delete a workspace blocklist address",
+        example: ["--address", "jane@acme.com"],
+        method: "DELETE",
+        options: [
+          {
+            description:
+              "An email address or a domain. Attio works out which one it is. Email addresses are trimmed and lowercased, and their host must be a valid domain. Domains are trimmed and lowercased, a URL is reduced to its hostname, and a leading `www.` is removed; subdomains are kept. Single labels (`acme`), bare public suffixes (`com`), unknown suffixes, IP addresses, wildcards and values over 253 characters are rejected.",
+            in: "path",
+            name: "address",
+            required: true,
+            type: "string",
+          },
+        ],
+      }),
+    },
+    description: "An address is an email address (jane@acme.com) or a domain (acme.com).",
   },
   meetings: {
     commands: {

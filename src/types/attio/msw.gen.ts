@@ -23,6 +23,7 @@ import type {
   DeleteV2ObjectsByObjectResponses,
   DeleteV2TasksByTaskIdResponses,
   DeleteV2WebhooksByWebhookIdResponses,
+  DeleteV2WorkspaceBlocklistAddressesByAddressResponses,
   GetV2ActivitiesByActivityRecordsByRecordIdResponses,
   GetV2ActivitiesByActivityResponses,
   GetV2ActivitiesResponses,
@@ -59,6 +60,7 @@ import type {
   GetV2ThreadsResponses,
   GetV2WebhooksByWebhookIdResponses,
   GetV2WebhooksResponses,
+  GetV2WorkspaceBlocklistAddressesResponses,
   GetV2WorkspaceMembersByWorkspaceMemberIdResponses,
   GetV2WorkspaceMembersResponses,
   PatchV2ActivitiesByActivityData,
@@ -153,6 +155,8 @@ import type {
   PutV2ObjectsByObjectRecordsByRecordIdResponses,
   PutV2ObjectsByObjectRecordsData,
   PutV2ObjectsByObjectRecordsResponses,
+  PutV2WorkspaceBlocklistAddressesData,
+  PutV2WorkspaceBlocklistAddressesResponses,
 } from "./types.gen";
 
 export type RequestHandlerOptions = RequestHandlerOptions2 & {
@@ -3456,6 +3460,122 @@ export function handlePostV2SequencesUnsubscribedEmails(
   );
 }
 
+export type HandleGetV2WorkspaceBlocklistAddressesResponse = {
+  body: GetV2WorkspaceBlocklistAddressesResponses[200];
+  status?: 200;
+};
+
+/**
+ * Handler for the `GET /v2/workspace_blocklist_addresses` operation.
+ */
+export function handleGetV2WorkspaceBlocklistAddresses(
+  response?: HandleGetV2WorkspaceBlocklistAddressesResponse | HttpResponseResolver<never, never>,
+  options?: RequestHandlerOptions,
+): HttpHandler {
+  return http.get<never, never>(
+    `${options?.baseUrl ?? "https://api.attio.com"}/v2/workspace_blocklist_addresses`,
+    (info) => {
+      if (typeof response === "function") {
+        return response(info);
+      }
+      const body = response?.body;
+      if (body !== undefined) {
+        return HttpResponse.json(body, { status: response?.status ?? 200 });
+      }
+      if (options?.responseFallback === "passthrough") {
+        return;
+      }
+      return new Response("Not Implemented", {
+        status: 501,
+        statusText: "Not Implemented",
+      });
+    },
+    options,
+  );
+}
+
+export type HandlePutV2WorkspaceBlocklistAddressesResponse = {
+  body: PutV2WorkspaceBlocklistAddressesResponses[200];
+  status?: 200;
+};
+
+/**
+ * Handler for the `PUT /v2/workspace_blocklist_addresses` operation.
+ */
+export function handlePutV2WorkspaceBlocklistAddresses(
+  response?:
+    | HandlePutV2WorkspaceBlocklistAddressesResponse
+    | HttpResponseResolver<never, PutV2WorkspaceBlocklistAddressesData["body"]>,
+  options?: RequestHandlerOptions,
+): HttpHandler {
+  return http.put<never, PutV2WorkspaceBlocklistAddressesData["body"]>(
+    `${options?.baseUrl ?? "https://api.attio.com"}/v2/workspace_blocklist_addresses`,
+    (info) => {
+      if (typeof response === "function") {
+        return response(info);
+      }
+      const body = response?.body;
+      if (body !== undefined) {
+        return HttpResponse.json(body, { status: response?.status ?? 200 });
+      }
+      if (options?.responseFallback === "passthrough") {
+        return;
+      }
+      return new Response("Not Implemented", {
+        status: 501,
+        statusText: "Not Implemented",
+      });
+    },
+    options,
+  );
+}
+
+export type HandleDeleteV2WorkspaceBlocklistAddressesByAddressResponse = {
+  body: DeleteV2WorkspaceBlocklistAddressesByAddressResponses[200];
+  status?: 200;
+};
+
+/**
+ * Handler for the `DELETE /v2/workspace_blocklist_addresses/{address}` operation.
+ */
+export function handleDeleteV2WorkspaceBlocklistAddressesByAddress(
+  response?:
+    | HandleDeleteV2WorkspaceBlocklistAddressesByAddressResponse
+    | HttpResponseResolver<
+        {
+          address: string;
+        },
+        never
+      >,
+  options?: RequestHandlerOptions,
+): HttpHandler {
+  return http.delete<
+    {
+      address: string;
+    },
+    never
+  >(
+    `${options?.baseUrl ?? "https://api.attio.com"}/v2/workspace_blocklist_addresses/:address`,
+    (info) => {
+      if (typeof response === "function") {
+        return response(info);
+      }
+      const body = response?.body;
+      if (body !== undefined) {
+        return HttpResponse.json(body, { status: response?.status ?? 200 });
+      }
+      if (options?.responseFallback === "passthrough") {
+        return;
+      }
+      return new Response("Not Implemented", {
+        status: 501,
+        statusText: "Not Implemented",
+      });
+    },
+    options,
+  );
+}
+
 export type HandleGetV2MeetingsResponse = {
   body: GetV2MeetingsResponses[200];
   status?: 200;
@@ -4724,6 +4844,18 @@ export type MswHandlerFactories = {
    */
   postV2SequencesUnsubscribedEmails: typeof handlePostV2SequencesUnsubscribedEmails;
   /**
+   * Handler for the `GET /v2/workspace_blocklist_addresses` operation.
+   */
+  getV2WorkspaceBlocklistAddresses: typeof handleGetV2WorkspaceBlocklistAddresses;
+  /**
+   * Handler for the `PUT /v2/workspace_blocklist_addresses` operation.
+   */
+  putV2WorkspaceBlocklistAddresses: typeof handlePutV2WorkspaceBlocklistAddresses;
+  /**
+   * Handler for the `DELETE /v2/workspace_blocklist_addresses/{address}` operation.
+   */
+  deleteV2WorkspaceBlocklistAddressesByAddress: typeof handleDeleteV2WorkspaceBlocklistAddressesByAddress;
+  /**
    * Handler for the `GET /v2/meetings` operation.
    */
   getV2Meetings: typeof handleGetV2Meetings;
@@ -4942,6 +5074,11 @@ export function createMswHandlers(config: RequestHandlerOptions = {}): CreateMsw
     getV2CommentsByCommentId: wrap(handleGetV2CommentsByCommentId),
     getV2Emails: wrap(handleGetV2Emails),
     postV2SequencesUnsubscribedEmails: wrap(handlePostV2SequencesUnsubscribedEmails),
+    getV2WorkspaceBlocklistAddresses: wrap(handleGetV2WorkspaceBlocklistAddresses),
+    putV2WorkspaceBlocklistAddresses: wrap(handlePutV2WorkspaceBlocklistAddresses),
+    deleteV2WorkspaceBlocklistAddressesByAddress: wrap(
+      handleDeleteV2WorkspaceBlocklistAddressesByAddress,
+    ),
     getV2Meetings: wrap(handleGetV2Meetings),
     postV2Meetings: wrap(handlePostV2Meetings),
     deleteV2MeetingsByMeetingId: wrap(handleDeleteV2MeetingsByMeetingId),
@@ -5138,6 +5275,10 @@ export function createMswHandlers(config: RequestHandlerOptions = {}): CreateMsw
       invoke(pick.getV2ThreadsByThreadId, overrides.getV2ThreadsByThreadId),
       invoke(pick.deleteV2CommentsByCommentId, overrides.deleteV2CommentsByCommentId),
       invoke(pick.getV2CommentsByCommentId, overrides.getV2CommentsByCommentId),
+      invoke(
+        pick.deleteV2WorkspaceBlocklistAddressesByAddress,
+        overrides.deleteV2WorkspaceBlocklistAddressesByAddress,
+      ),
       invoke(pick.deleteV2MeetingsByMeetingId, overrides.deleteV2MeetingsByMeetingId),
       invoke(pick.getV2MeetingsByMeetingId, overrides.getV2MeetingsByMeetingId),
       invoke(pick.patchV2MeetingsByMeetingId, overrides.patchV2MeetingsByMeetingId),
@@ -5162,6 +5303,8 @@ export function createMswHandlers(config: RequestHandlerOptions = {}): CreateMsw
       invoke(pick.getV2Threads, overrides.getV2Threads),
       invoke(pick.postV2Comments, overrides.postV2Comments),
       invoke(pick.getV2Emails, overrides.getV2Emails),
+      invoke(pick.getV2WorkspaceBlocklistAddresses, overrides.getV2WorkspaceBlocklistAddresses),
+      invoke(pick.putV2WorkspaceBlocklistAddresses, overrides.putV2WorkspaceBlocklistAddresses),
       invoke(pick.getV2Meetings, overrides.getV2Meetings),
       invoke(pick.postV2Meetings, overrides.postV2Meetings),
       invoke(pick.getV2Files, overrides.getV2Files),

@@ -87,6 +87,10 @@
       "description": "Sequences are automated email campaigns sent from Attio."
     },
     {
+      "name": "Workspace blocklist",
+      "description": "An address is an email address (jane@acme.com) or a domain (acme.com). The workspace blocklist is the workspace-wide list of addresses whose emails and calendar events are hidden in Attio. An email address matches only itself, and a domain matches every email address at that domain. The address itself is the key: there is no separate ID."
+    },
+    {
       "name": "Call recordings",
       "description": "Call recordings store video, audio, transcript and speaker information for calls. They are linked to meetings."
     },
@@ -191,7 +195,11 @@
               "activity_record:read": "View, and optionally write, activity records.",
               "activity_record:read-write": "View, and optionally write, activity records.",
               "sequence_unsubscribe:read": "View, and optionally add to, the sequence unsubscribe list.",
-              "sequence_unsubscribe:read-write": "View, and optionally add to, the sequence unsubscribe list."
+              "sequence_unsubscribe:read-write": "View, and optionally add to, the sequence unsubscribe list.",
+              "email_calendar_blocklist:read": "View, and optionally manage, the addresses (email addresses and domains) whose emails and calendar events are hidden in Attio.",
+              "email_calendar_blocklist:read-write": "View, and optionally manage, the addresses (email addresses and domains) whose emails and calendar events are hidden in Attio.",
+              "view:read": "View, and optionally manage, the saved views of objects and lists, with their filters, sorts and shown attributes.",
+              "view:read-write": "View, and optionally manage, the saved views of objects and lists, with their filters, sorts and shown attributes."
             }
           }
         }
@@ -3572,6 +3580,513 @@
           "id",
           "title",
           "created_at"
+        ]
+      },
+      "view-object-attribute-ref": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "A slug or ID of the object that the reference of the previous attribute points to. It is required because a reference can allow several objects.",
+            "example": "companies"
+          },
+          "attribute": {
+            "type": "string",
+            "description": "A slug or ID of an attribute of this object.",
+            "example": "name"
+          }
+        },
+        "required": [
+          "object",
+          "attribute"
+        ]
+      },
+      "view-attribute-path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "string",
+                "description": "A slug or ID of an attribute of the view's object."
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/view-object-attribute-ref"
+            },
+            "minItems": 2,
+            "maxItems": 5
+          }
+        ],
+        "description": "A slug or ID of an attribute of the view's object, or an array that follows record references. The array starts with a slug or ID of an attribute of the view's object. Each later item is an `{object, attribute}` pair. Use a slug or ID, not an array, for a single attribute. Responses use IDs only.",
+        "example": [
+          "company",
+          {
+            "object": "companies",
+            "attribute": "name"
+          }
+        ]
+      },
+      "view-filter-condition": {
+        "type": "object",
+        "properties": {
+          "attribute": {
+            "$ref": "#/components/schemas/view-attribute-path"
+          },
+          "field": {
+            "type": "string",
+            "description": "The field of the attribute. If omitted, the default field of the attribute type is used.",
+            "example": "last_name"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "eq",
+              "not_eq",
+              "lt",
+              "gt",
+              "contains",
+              "not_contains",
+              "starts_with",
+              "ends_with",
+              "empty",
+              "not_empty",
+              "entered",
+              "not_entered",
+              "in"
+            ],
+            "description": "The operator. `in` takes a non-empty array and matches when one `eq` condition with one of its values matches. Responses never contain `in`.",
+            "example": "contains"
+          },
+          "value": {
+            "description": "The value. Its shape depends on the attribute type, the field and the operator:\n\n| Attribute type | Field | Operators | Value |\n| --- | --- | --- | --- |\n| `text` | `value` (default) | `eq`, `not_eq`, `contains`, `not_contains`, `starts_with`, `ends_with` | A non-empty string |\n| `text` | `value` (default) | `empty`, `not_empty` | No value |\n| `number` | `value` (default) | `eq`, `not_eq`, `lt`, `gt` | A number |\n| `number` | `value` (default) | `empty`, `not_empty` | No value |\n| `rating` | `value` (default) | `eq`, `not_eq`, `lt`, `gt` | A number |\n| `rating` | `value` (default) | `empty`, `not_empty` | No value |\n| `checkbox` | `value` (default) | `eq` | `true` or `false` |\n| `select` | `option` (default) | `eq`, `not_eq`, `lt`, `gt` | A select option ID or title |\n| `select` | `option` (default) | `empty`, `not_empty` | No value |\n| `status` | `status` (default) | `eq`, `not_eq` | A status ID or title |\n| `status` | `status` (default) | `entered`, `not_entered` | `{\"status\": <status ID or title>}` with exactly one of `after` or `before`, each an ISO 8601 timestamp or `{\"relative\": <ISO 8601 duration>}` with one unit of years, months, weeks, days, hours, minutes or seconds, e.g. `-PT12H` |\n| `status` | `status` (default) | `empty`, `not_empty` | No value |\n| `actor-reference` | `referenced_actor_id` (default) | `eq`, `not_eq` | A workspace member ID, or `{\"current_member\": true}` |\n| `actor-reference` | `referenced_actor_id` (default) | `empty`, `not_empty` | No value |\n| `actor-reference` | `referenced_actor_type` | `eq`, `not_eq` | An actor type, such as `workspace-member` or `api-token` |\n| `actor-reference` | `referenced_actor_team_id` | `eq`, `not_eq` | A team ID |\n| `currency` | `currency_value` (default) | `eq`, `not_eq`, `lt`, `gt` | A number |\n| `currency` | `currency_value` (default) | `empty`, `not_empty` | No value |\n| `date` | `value` (default) | `eq`, `not_eq` | A date in the format `YYYY-MM-DD` |\n| `date` | `value` (default) | `lt`, `gt` | A date in the format `YYYY-MM-DD`, or `{\"relative\": <ISO 8601 duration>}` with one unit of years, months, weeks or days, e.g. `-P30D` |\n| `date` | `value` (default) | `empty`, `not_empty` | No value |\n| `timestamp` | `value` (default) | `eq`, `not_eq` | An ISO 8601 timestamp |\n| `timestamp` | `value` (default) | `lt`, `gt` | An ISO 8601 timestamp, or `{\"relative\": <ISO 8601 duration>}` with one unit of years, months, weeks, days, hours, minutes or seconds, e.g. `-PT12H` |\n| `timestamp` | `value` (default) | `empty`, `not_empty` | No value |\n| `record-reference` | `target_record_id` (default) | `eq`, `not_eq` | `{\"target_object\": <object slug or ID>, \"target_record_id\": <record ID>}` |\n| `record-reference` | `target_object` | `eq`, `not_eq` | An object slug or ID |\n| `record-reference` | `target_record_id` (default) | `empty`, `not_empty` | No value |\n| `interaction` | `interacted_at` (default) | `lt`, `gt` | An ISO 8601 timestamp, or `{\"relative\": <ISO 8601 duration>}` with one unit of years, months, weeks, days, hours, minutes or seconds, e.g. `-PT12H` |\n| `interaction` | `interacted_at` (default) | `empty`, `not_empty` | No value |\n| `interaction` | `owner_member_id` | `eq`, `not_eq` | A workspace member ID, or `{\"current_member\": true}` |\n| `interaction` | `owner_member_id` | `empty`, `not_empty` | No value |\n| `interaction` | `referenced_actor_team_id` | `eq`, `not_eq` | A team ID |\n| `location` | `locality` | `eq`, `not_eq`, `contains`, `not_contains`, `starts_with`, `ends_with` | A non-empty string |\n| `location` | `locality` | `empty`, `not_empty` | No value |\n| `location` | `region` | `eq`, `not_eq`, `contains`, `not_contains` | A non-empty string |\n| `location` | `region` | `empty`, `not_empty` | No value |\n| `location` | `country_code` | `eq`, `not_eq` | An ISO 3166-1 alpha-2 country code |\n| `location` | `country_code` | `empty`, `not_empty` | No value |\n| `domain` | `domain` (default) | `eq`, `not_eq` | A domain or URL, e.g. `example.com` |\n| `domain` | `domain` (default) | `contains`, `not_contains`, `starts_with`, `ends_with` | A non-empty string |\n| `domain` | `domain` (default) | `empty`, `not_empty` | No value |\n| `email-address` | `email_address` (default) | `eq`, `not_eq`, `contains`, `not_contains`, `starts_with`, `ends_with` | A non-empty string |\n| `email-address` | `email_address` (default) | `empty`, `not_empty` | No value |\n| `email-address` | `email_domain` | `eq`, `not_eq`, `contains`, `not_contains` | A non-empty string |\n| `phone-number` | `phone_number` (default) | `eq`, `not_eq`, `contains`, `not_contains`, `starts_with`, `ends_with` | A non-empty string |\n| `phone-number` | `phone_number` (default) | `empty`, `not_empty` | No value |\n| `phone-number` | `country_code` | `eq`, `not_eq` | An ISO 3166-1 alpha-2 country code |\n| `phone-number` | `country_code` | `empty`, `not_empty` | No value |\n| `personal-name` | `full_name` (default) | `eq`, `not_eq`, `contains`, `not_contains`, `starts_with`, `ends_with` | A non-empty string |\n| `personal-name` | `full_name` (default) | `empty`, `not_empty` | No value |\n| `personal-name` | `first_name` | `eq`, `not_eq`, `contains`, `not_contains`, `starts_with`, `ends_with` | A non-empty string |\n| `personal-name` | `first_name` | `empty`, `not_empty` | No value |\n| `personal-name` | `last_name` | `eq`, `not_eq`, `contains`, `not_contains`, `starts_with`, `ends_with` | A non-empty string |\n| `personal-name` | `last_name` | `empty`, `not_empty` | No value |"
+          }
+        },
+        "required": [
+          "attribute",
+          "op"
+        ],
+        "description": "A condition on one attribute.",
+        "title": "Condition",
+        "example": {
+          "attribute": "name",
+          "op": "contains",
+          "value": "Ada"
+        }
+      },
+      "view-filter": {
+        "description": "A condition, or a group of filters of which all (`and`) or at least one (`or`) must match.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/view-filter-condition"
+          },
+          {
+            "title": "All of (and)",
+            "type": "object",
+            "properties": {
+              "and": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/components/schemas/view-filter"
+                }
+              }
+            },
+            "required": [
+              "and"
+            ],
+            "additionalProperties": false,
+            "example": {
+              "and": [
+                {
+                  "attribute": "name",
+                  "op": "contains",
+                  "value": "Ada"
+                },
+                {
+                  "attribute": "stage",
+                  "op": "eq",
+                  "value": "Lead"
+                }
+              ]
+            }
+          },
+          {
+            "title": "Any of (or)",
+            "type": "object",
+            "properties": {
+              "or": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/components/schemas/view-filter"
+                }
+              }
+            },
+            "required": [
+              "or"
+            ],
+            "additionalProperties": false,
+            "example": {
+              "or": [
+                {
+                  "attribute": "stage",
+                  "op": "eq",
+                  "value": "Lead"
+                },
+                {
+                  "attribute": "stage",
+                  "op": "empty"
+                }
+              ]
+            }
+          }
+        ],
+        "example": {
+          "and": [
+            {
+              "attribute": "name",
+              "op": "contains",
+              "value": "Ada"
+            },
+            {
+              "or": [
+                {
+                  "attribute": "stage",
+                  "op": "eq",
+                  "value": "Lead"
+                },
+                {
+                  "attribute": "stage",
+                  "op": "empty"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "view-sort": {
+        "type": "object",
+        "properties": {
+          "attribute": {
+            "$ref": "#/components/schemas/view-attribute-path"
+          },
+          "field": {
+            "type": "string",
+            "description": "The field to sort by. If omitted, the default field of the attribute type is used. A record reference cannot be sorted directly; sort by a path to an attribute of the referenced record.\n\n| Attribute type | Fields |\n| --- | --- |\n| `text` | `value` (default) |\n| `number` | `value` (default) |\n| `checkbox` | `value` (default) |\n| `date` | `value` (default) |\n| `timestamp` | `value` (default) |\n| `rating` | `value` (default) |\n| `currency` | `currency_value` (default) |\n| `select` | `option` (default) |\n| `status` | `status` (default), `active_from` |\n| `personal-name` | `first_name`, `last_name`, `full_name` (default) |\n| `location` | `locality`, `region`, `country_code` |\n| `domain` | `domain` (default) |\n| `email-address` | `email_address` (default) |\n| `phone-number` | `phone_number` (default) |\n| `actor-reference` | `referenced_actor_id` (default) |\n| `interaction` | `interacted_at` (default), `owner_member_id` |",
+            "example": "last_name"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "example": "asc"
+          }
+        },
+        "required": [
+          "attribute",
+          "direction"
+        ],
+        "description": "A sort on one attribute.",
+        "example": {
+          "attribute": "name",
+          "field": "last_name",
+          "direction": "asc"
+        }
+      },
+      "view-attribute": {
+        "type": "object",
+        "properties": {
+          "attribute": {
+            "$ref": "#/components/schemas/view-attribute-path"
+          },
+          "field": {
+            "type": "string",
+            "description": "The field of the attribute that the column shows.",
+            "example": "first_name"
+          },
+          "title": {
+            "type": "string",
+            "description": "The column title. If omitted, the column shows the title of the attribute.",
+            "example": "Employer"
+          }
+        },
+        "required": [
+          "attribute"
+        ],
+        "description": "An attribute that the view shows.",
+        "example": {
+          "attribute": "name",
+          "field": "first_name"
+        }
+      },
+      "object-view-with-definition": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/object-view"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "table",
+                  "kanban"
+                ],
+                "description": "How the view shows records.",
+                "example": "table"
+              },
+              "filter": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/view-filter"
+                  },
+                  {
+                    "description": "The filter of the view. `null` when the view shows all records."
+                  }
+                ]
+              },
+              "sorts": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/view-sort"
+                },
+                "description": "The sorts, in order."
+              },
+              "attributes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/view-attribute"
+                },
+                "description": "The attributes that the view shows, in display order."
+              },
+              "kanban": {
+                "type": "object",
+                "properties": {
+                  "status_attribute": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/view-attribute-path"
+                      },
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "array",
+                            "prefixItems": [
+                              {
+                                "type": "string",
+                                "description": "A slug or ID of an attribute of the view's object."
+                              }
+                            ],
+                            "items": {
+                              "$ref": "#/components/schemas/view-object-attribute-ref"
+                            },
+                            "minItems": 2,
+                            "maxItems": 5
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "The status attribute whose statuses are the columns of the board, on the view's object or on the parent record of a list entry. `null` when none is set yet."
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "status_attribute"
+                ],
+                "description": "The settings of a kanban view. Omitted for table views."
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "attribute",
+                        "object",
+                        "option",
+                        "status",
+                        "team"
+                      ]
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "api_slug": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "title",
+                    "api_slug"
+                  ]
+                },
+                "description": "The title and slug of each attribute and object ID in the view, and the title of each option, status and team ID in the filter values. The view only uses IDs, so that it does not change when a slug changes.",
+                "example": {
+                  "41252299-f8c7-4b5e-99c9-4ff8321d2f96": {
+                    "kind": "attribute",
+                    "title": "Name",
+                    "api_slug": "name"
+                  }
+                }
+              }
+            },
+            "required": [
+              "type",
+              "sorts",
+              "attributes",
+              "metadata"
+            ]
+          }
+        ]
+      },
+      "list-view-with-definition": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/list-view"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "table",
+                  "kanban"
+                ],
+                "description": "How the view shows records.",
+                "example": "table"
+              },
+              "filter": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/view-filter"
+                  },
+                  {
+                    "description": "The filter of the view. `null` when the view shows all records."
+                  }
+                ]
+              },
+              "sorts": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/view-sort"
+                },
+                "description": "The sorts, in order."
+              },
+              "attributes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/view-attribute"
+                },
+                "description": "The attributes that the view shows, in display order."
+              },
+              "kanban": {
+                "type": "object",
+                "properties": {
+                  "status_attribute": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/view-attribute-path"
+                      },
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "array",
+                            "prefixItems": [
+                              {
+                                "type": "string",
+                                "description": "A slug or ID of an attribute of the view's object."
+                              }
+                            ],
+                            "items": {
+                              "$ref": "#/components/schemas/view-object-attribute-ref"
+                            },
+                            "minItems": 2,
+                            "maxItems": 5
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "The status attribute whose statuses are the columns of the board, on the view's object or on the parent record of a list entry. `null` when none is set yet."
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "status_attribute"
+                ],
+                "description": "The settings of a kanban view. Omitted for table views."
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "attribute",
+                        "object",
+                        "option",
+                        "status",
+                        "team"
+                      ]
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "api_slug": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "title",
+                    "api_slug"
+                  ]
+                },
+                "description": "The title and slug of each attribute and object ID in the view, and the title of each option, status and team ID in the filter values. The view only uses IDs, so that it does not change when a slug changes.",
+                "example": {
+                  "41252299-f8c7-4b5e-99c9-4ff8321d2f96": {
+                    "kind": "attribute",
+                    "title": "Name",
+                    "api_slug": "name"
+                  }
+                }
+              }
+            },
+            "required": [
+              "type",
+              "sorts",
+              "attributes",
+              "metadata"
+            ]
+          }
         ]
       },
       "workspace-member": {
@@ -63929,6 +64444,670 @@
         }
       }
     },
+    "/v2/workspace_blocklist_addresses": {
+      "get": {
+        "summary": "List workspace blocklist addresses",
+        "description": "An address is an email address (jane@acme.com) or a domain (acme.com).\n\nLists every address on the workspace blocklist, at both enforcement levels. Email addresses come first, then domains, each in alphabetical order.\n\nA user-level access token can only call this endpoint if the workspace member it acts for is a workspace admin.\n\nThis endpoint is in alpha and may be subject to breaking changes as we gather feedback.\n\nRequired scopes: `email_calendar_blocklist:read`.\n\nSupported token levels: `workspace`, `user`.",
+        "tags": [
+          "Workspace blocklist"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "email_calendar_blocklist:read"
+            ]
+          }
+        ],
+        "x-mint": {
+          "metadata": {
+            "tag": "ALPHA"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500,
+              "default": 500,
+              "description": "The maximum number of addresses to return. Must be between 1 and 500. Defaults to 500.",
+              "example": 500
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "A pagination cursor used to fetch the next page of addresses. Responses with more addresses will include a cursor for you to use here. If not provided, the first page will be returned."
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "address": {
+                            "type": "string",
+                            "description": "The normalized email address or domain. It is the address's key on the workspace blocklist.",
+                            "example": "jane@acme.com"
+                          },
+                          "address_type": {
+                            "type": "string",
+                            "enum": [
+                              "email_address",
+                              "domain"
+                            ],
+                            "description": "Whether the address is an email address or a domain.",
+                            "example": "email_address"
+                          },
+                          "enforcement_level": {
+                            "type": "string",
+                            "enum": [
+                              "protected",
+                              "blocked"
+                            ],
+                            "description": "`protected`: emails and calendar events are hidden unless at least one participant is not on the workspace blocklist. `blocked`: they are hidden even when other participants are included.",
+                            "example": "blocked"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "When the address was given its current enforcement level.",
+                            "example": "2026-10-28T09:12:44.210Z"
+                          }
+                        },
+                        "required": [
+                          "address",
+                          "address_type",
+                          "enforcement_level",
+                          "created_at"
+                        ]
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "next_cursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "next_cursor"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "pagination"
+                  ],
+                  "description": "Success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status_code": {
+                      "type": "number",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "invalid_request_error"
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "validation_type"
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid cursor."
+                    }
+                  },
+                  "required": [
+                    "status_code",
+                    "type",
+                    "code",
+                    "message"
+                  ],
+                  "description": "Bad Request"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status_code": {
+                      "type": "number",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "auth_error"
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "unauthorized"
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "A user-level access token can only manage the workspace blocklist if the member it acts for is a workspace admin."
+                    }
+                  },
+                  "required": [
+                    "status_code",
+                    "type",
+                    "code",
+                    "message"
+                  ],
+                  "description": "Forbidden"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Add or update workspace blocklist addresses",
+        "description": "An address is an email address (jane@acme.com) or a domain (acme.com).\n\nSets each address in the request to the given enforcement level on the workspace blocklist. The address itself is its key: there is no separate ID.\n\nAn address that isn't on the workspace blocklist is added. An address already at the requested level is left unchanged, so this endpoint is safe to retry. An address at the other level is moved to the requested level.\n\nThis endpoint only adds and updates the addresses in the request. Addresses on the workspace blocklist that aren't in the request are left alone; it never replaces the whole list.\n\nAddresses are normalized: email addresses and domains are trimmed and lowercased, a URL is reduced to its hostname, and a leading `www.` is removed. The response returns the normalized value, which is the key for the address. Duplicate addresses are collapsed, and a request that gives the same address two different enforcement levels is rejected.\n\nThe request is applied all or nothing. Protected changes take effect immediately. Blocked changes take effect once each connected mailbox has re-synced, which may take a few minutes.\n\nA user-level access token can only call this endpoint if the workspace member it acts for is a workspace admin.\n\nThis endpoint is in alpha and may be subject to breaking changes as we gather feedback.\n\nRequired scopes: `email_calendar_blocklist:read-write`.\n\nSupported token levels: `workspace`, `user`.",
+        "tags": [
+          "Workspace blocklist"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "email_calendar_blocklist:read-write"
+            ]
+          }
+        ],
+        "x-mint": {
+          "metadata": {
+            "tag": "ALPHA"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "addresses": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "address": {
+                              "type": "string",
+                              "description": "An email address or a domain. Attio works out which one it is. Email addresses are trimmed and lowercased, and their host must be a valid domain. Domains are trimmed and lowercased, a URL is reduced to its hostname, and a leading `www.` is removed; subdomains are kept. Single labels (`acme`), bare public suffixes (`com`), unknown suffixes, IP addresses, wildcards and values over 253 characters are rejected.",
+                              "example": "jane@acme.com"
+                            },
+                            "enforcement_level": {
+                              "type": "string",
+                              "enum": [
+                                "protected",
+                                "blocked"
+                              ],
+                              "description": "`protected`: emails and calendar events are hidden unless at least one participant is not on the workspace blocklist. `blocked`: they are hidden even when other participants are included.",
+                              "example": "blocked"
+                            }
+                          },
+                          "required": [
+                            "address",
+                            "enforcement_level"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "minItems": 1,
+                        "maxItems": 500,
+                        "description": "The addresses to set and the enforcement level each should have. A maximum of 500 addresses can be provided per request. The same address may not appear with two different enforcement levels."
+                      }
+                    },
+                    "required": [
+                      "addresses"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "data"
+                ],
+                "additionalProperties": false
+              },
+              "examples": {
+                "Add, keep and move addresses": {
+                  "summary": "Set email addresses and domains to different enforcement levels in one request",
+                  "value": {
+                    "data": {
+                      "addresses": [
+                        {
+                          "address": "lists@acme.com",
+                          "enforcement_level": "blocked"
+                        },
+                        {
+                          "address": "https://www.newsletter.example.com",
+                          "enforcement_level": "blocked"
+                        },
+                        {
+                          "address": "jane@acme.com",
+                          "enforcement_level": "protected"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "address": {
+                            "type": "string",
+                            "description": "The normalized email address or domain. It is the address's key on the workspace blocklist.",
+                            "example": "jane@acme.com"
+                          },
+                          "address_type": {
+                            "type": "string",
+                            "enum": [
+                              "email_address",
+                              "domain"
+                            ],
+                            "description": "Whether the address is an email address or a domain.",
+                            "example": "email_address"
+                          },
+                          "enforcement_level": {
+                            "type": "string",
+                            "enum": [
+                              "protected",
+                              "blocked"
+                            ],
+                            "description": "`protected`: emails and calendar events are hidden unless at least one participant is not on the workspace blocklist. `blocked`: they are hidden even when other participants are included.",
+                            "example": "blocked"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "When the address was given its current enforcement level.",
+                            "example": "2026-10-28T09:12:44.210Z"
+                          }
+                        },
+                        "required": [
+                          "address",
+                          "address_type",
+                          "enforcement_level",
+                          "created_at"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "description": "Success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status_code": {
+                      "type": "number",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "invalid_request_error"
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "validation_type"
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Body payload validation error."
+                    }
+                  },
+                  "required": [
+                    "status_code",
+                    "type",
+                    "code",
+                    "message"
+                  ],
+                  "description": "Bad Request"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status_code": {
+                      "type": "number",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "auth_error"
+                      ]
+                    },
+                    "code": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "unauthorized"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "billing_error"
+                          ]
+                        }
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "A user-level access token can only manage the workspace blocklist if the member it acts for is a workspace admin."
+                    }
+                  },
+                  "required": [
+                    "status_code",
+                    "type",
+                    "code",
+                    "message"
+                  ],
+                  "description": "Forbidden"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status_code": {
+                      "type": "number",
+                      "enum": [
+                        409
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "invalid_request_error"
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "uniqueness_conflict"
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "One or more addresses were changed by a concurrent request. Please retry."
+                    }
+                  },
+                  "required": [
+                    "status_code",
+                    "type",
+                    "code",
+                    "message"
+                  ],
+                  "description": "Conflict"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/workspace_blocklist_addresses/{address}": {
+      "delete": {
+        "summary": "Delete a workspace blocklist address",
+        "description": "An address is an email address (jane@acme.com) or a domain (acme.com).\n\nRemoves an address from the workspace blocklist, whatever its enforcement level. The address itself is its key: there is no separate ID.\n\nThe address is normalized as when it is added: email addresses and domains are trimmed and lowercased, a URL is reduced to its hostname, and a leading `www.` is removed. So the address is found whatever form it was added in. A URL, or any other value with reserved characters, must be percent-encoded in the path.\n\nAn address that isn't on the workspace blocklist returns a `404`. A client retrying a request can treat a `404` as done.\n\nRemoving a protected address takes effect immediately. Removing a blocked address takes effect once each connected mailbox has re-synced, which may take a few minutes.\n\nA user-level access token can only call this endpoint if the workspace member it acts for is a workspace admin.\n\nThis endpoint is in alpha and may be subject to breaking changes as we gather feedback.\n\nRequired scopes: `email_calendar_blocklist:read-write`.\n\nSupported token levels: `workspace`, `user`.",
+        "tags": [
+          "Workspace blocklist"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "email_calendar_blocklist:read-write"
+            ]
+          }
+        ],
+        "x-mint": {
+          "metadata": {
+            "tag": "ALPHA"
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "An email address or a domain. Attio works out which one it is. Email addresses are trimmed and lowercased, and their host must be a valid domain. Domains are trimmed and lowercased, a URL is reduced to its hostname, and a leading `www.` is removed; subdomains are kept. Single labels (`acme`), bare public suffixes (`com`), unknown suffixes, IP addresses, wildcards and values over 253 characters are rejected.",
+              "example": "jane@acme.com"
+            },
+            "required": true,
+            "name": "address",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "description": "Success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status_code": {
+                      "type": "number",
+                      "enum": [
+                        400
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "invalid_request_error"
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "validation_type"
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Path params validation error."
+                    }
+                  },
+                  "required": [
+                    "status_code",
+                    "type",
+                    "code",
+                    "message"
+                  ],
+                  "description": "Bad Request"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status_code": {
+                      "type": "number",
+                      "enum": [
+                        403
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "auth_error"
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "unauthorized"
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "A user-level access token can only manage the workspace blocklist if the member it acts for is a workspace admin."
+                    }
+                  },
+                  "required": [
+                    "status_code",
+                    "type",
+                    "code",
+                    "message"
+                  ],
+                  "description": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status_code": {
+                      "type": "number",
+                      "enum": [
+                        404
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "invalid_request_error"
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "not_found"
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Address not found on the workspace blocklist"
+                    }
+                  },
+                  "required": [
+                    "status_code",
+                    "type",
+                    "code",
+                    "message"
+                  ],
+                  "description": "Not Found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v2/meetings": {
       "get": {
         "summary": "List meetings",
@@ -65177,7 +66356,7 @@
       },
       "post": {
         "summary": "Create call recording",
-        "description": "Create a call recording for a meeting. This endpoint is rate limited to 1 request per second.\n\nA `transcript` should always be provided — it is technically optional for backwards compatibility, but a call recording created without one will be missing summaries and other transcript-derived features. `video_url` is optional, and a transcript-only call recording (with no video) is fully supported.\n\nThis endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.\n\nRequired scopes: `meeting:read`, `call_recording:read-write`.\n\nSupported token levels: `workspace`, `user`.",
+        "description": "Create a call recording for a meeting. This endpoint is rate limited to 1 request per second.\n\nA `transcript` is required. `video_url` is optional, and a transcript-only call recording (with no video) is fully supported.\n\nThis endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.\n\nRequired scopes: `meeting:read`, `call_recording:read-write`.\n\nSupported token levels: `workspace`, `user`.",
         "tags": [
           "Call recordings"
         ],
@@ -65271,10 +66450,14 @@
                             "speaker"
                           ]
                         },
+                        "minItems": 1,
                         "maxItems": 4000,
-                        "description": "The call recording's transcript.\n\nThis field is technically optional for backwards compatibility, but you should always provide it — a call recording created without a transcript will be missing summaries and other transcript-derived features. This field will become required in a future version of this endpoint."
+                        "description": "The call recording's transcript. It must contain at least one transcript segment."
                       }
-                    }
+                    },
+                    "required": [
+                      "transcript"
+                    ]
                   }
                 },
                 "required": [
@@ -68925,8 +70108,7 @@
                         },
                         "sub": {
                           "type": "string",
-                          "format": "uuid",
-                          "description": "Since Bearer tokens grant Workspace-level permissions, this property contains the workspace_id."
+                          "description": "The subject of the token. For a workspace-level token, this is the workspace ID. For a user-level token, this is an opaque value that identifies the workspace member. Do not parse this value. To get the workspace ID, use workspace_id. To get the workspace member ID, use authorized_by_workspace_member_id."
                         },
                         "aud": {
                           "type": "string",
@@ -69043,7 +70225,7 @@
                       "token_type": "Bearer",
                       "exp": null,
                       "iat": 1672585200,
-                      "sub": "14beef7a-99f7-4534-a87e-70b564330a4c",
+                      "sub": "wsm_14beef7a-99f7-4534-a87e-70b564330a4c_50cf242c-7fa3-4cad-87d0-75b1af71c57b",
                       "aud": "1e4a3f7c-8d29-4b51-9e0f-6c3a5d8b21e7",
                       "iss": "attio.com",
                       "token_level": "user",

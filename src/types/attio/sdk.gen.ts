@@ -46,6 +46,9 @@ import type {
   DeleteV2WebhooksByWebhookIdData,
   DeleteV2WebhooksByWebhookIdErrors,
   DeleteV2WebhooksByWebhookIdResponses,
+  DeleteV2WorkspaceBlocklistAddressesByAddressData,
+  DeleteV2WorkspaceBlocklistAddressesByAddressErrors,
+  DeleteV2WorkspaceBlocklistAddressesByAddressResponses,
   GetV2ActivitiesByActivityData,
   GetV2ActivitiesByActivityErrors,
   GetV2ActivitiesByActivityRecordsByRecordIdData,
@@ -141,6 +144,9 @@ import type {
   GetV2WebhooksByWebhookIdResponses,
   GetV2WebhooksData,
   GetV2WebhooksResponses,
+  GetV2WorkspaceBlocklistAddressesData,
+  GetV2WorkspaceBlocklistAddressesErrors,
+  GetV2WorkspaceBlocklistAddressesResponses,
   GetV2WorkspaceMembersByWorkspaceMemberIdData,
   GetV2WorkspaceMembersByWorkspaceMemberIdErrors,
   GetV2WorkspaceMembersByWorkspaceMemberIdResponses,
@@ -283,6 +289,9 @@ import type {
   PutV2ObjectsByObjectRecordsData,
   PutV2ObjectsByObjectRecordsErrors,
   PutV2ObjectsByObjectRecordsResponses,
+  PutV2WorkspaceBlocklistAddressesData,
+  PutV2WorkspaceBlocklistAddressesErrors,
+  PutV2WorkspaceBlocklistAddressesResponses,
 } from "./types.gen";
 
 export type Options<
@@ -2341,6 +2350,120 @@ export const postV2SequencesUnsubscribedEmails = <ThrowOnError extends boolean =
   });
 
 /**
+ * List workspace blocklist addresses
+ *
+ * An address is an email address (jane@acme.com) or a domain (acme.com).
+ *
+ * Lists every address on the workspace blocklist, at both enforcement levels. Email addresses come first, then domains, each in alphabetical order.
+ *
+ * A user-level access token can only call this endpoint if the workspace member it acts for is a workspace admin.
+ *
+ * This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+ *
+ * Required scopes: `email_calendar_blocklist:read`.
+ *
+ * Supported token levels: `workspace`, `user`.
+ */
+export const getV2WorkspaceBlocklistAddresses = <ThrowOnError extends boolean = true>(
+  options?: Options<GetV2WorkspaceBlocklistAddressesData, ThrowOnError>,
+): RequestResult<
+  GetV2WorkspaceBlocklistAddressesResponses,
+  GetV2WorkspaceBlocklistAddressesErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).get<
+    GetV2WorkspaceBlocklistAddressesResponses,
+    GetV2WorkspaceBlocklistAddressesErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/v2/workspace_blocklist_addresses",
+    ...options,
+  });
+
+/**
+ * Add or update workspace blocklist addresses
+ *
+ * An address is an email address (jane@acme.com) or a domain (acme.com).
+ *
+ * Sets each address in the request to the given enforcement level on the workspace blocklist. The address itself is its key: there is no separate ID.
+ *
+ * An address that isn't on the workspace blocklist is added. An address already at the requested level is left unchanged, so this endpoint is safe to retry. An address at the other level is moved to the requested level.
+ *
+ * This endpoint only adds and updates the addresses in the request. Addresses on the workspace blocklist that aren't in the request are left alone; it never replaces the whole list.
+ *
+ * Addresses are normalized: email addresses and domains are trimmed and lowercased, a URL is reduced to its hostname, and a leading `www.` is removed. The response returns the normalized value, which is the key for the address. Duplicate addresses are collapsed, and a request that gives the same address two different enforcement levels is rejected.
+ *
+ * The request is applied all or nothing. Protected changes take effect immediately. Blocked changes take effect once each connected mailbox has re-synced, which may take a few minutes.
+ *
+ * A user-level access token can only call this endpoint if the workspace member it acts for is a workspace admin.
+ *
+ * This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+ *
+ * Required scopes: `email_calendar_blocklist:read-write`.
+ *
+ * Supported token levels: `workspace`, `user`.
+ */
+export const putV2WorkspaceBlocklistAddresses = <ThrowOnError extends boolean = true>(
+  options: Options<PutV2WorkspaceBlocklistAddressesData, ThrowOnError>,
+): RequestResult<
+  PutV2WorkspaceBlocklistAddressesResponses,
+  PutV2WorkspaceBlocklistAddressesErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutV2WorkspaceBlocklistAddressesResponses,
+    PutV2WorkspaceBlocklistAddressesErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/v2/workspace_blocklist_addresses",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
+ * Delete a workspace blocklist address
+ *
+ * An address is an email address (jane@acme.com) or a domain (acme.com).
+ *
+ * Removes an address from the workspace blocklist, whatever its enforcement level. The address itself is its key: there is no separate ID.
+ *
+ * The address is normalized as when it is added: email addresses and domains are trimmed and lowercased, a URL is reduced to its hostname, and a leading `www.` is removed. So the address is found whatever form it was added in. A URL, or any other value with reserved characters, must be percent-encoded in the path.
+ *
+ * An address that isn't on the workspace blocklist returns a `404`. A client retrying a request can treat a `404` as done.
+ *
+ * Removing a protected address takes effect immediately. Removing a blocked address takes effect once each connected mailbox has re-synced, which may take a few minutes.
+ *
+ * A user-level access token can only call this endpoint if the workspace member it acts for is a workspace admin.
+ *
+ * This endpoint is in alpha and may be subject to breaking changes as we gather feedback.
+ *
+ * Required scopes: `email_calendar_blocklist:read-write`.
+ *
+ * Supported token levels: `workspace`, `user`.
+ */
+export const deleteV2WorkspaceBlocklistAddressesByAddress = <ThrowOnError extends boolean = true>(
+  options: Options<DeleteV2WorkspaceBlocklistAddressesByAddressData, ThrowOnError>,
+): RequestResult<
+  DeleteV2WorkspaceBlocklistAddressesByAddressResponses,
+  DeleteV2WorkspaceBlocklistAddressesByAddressErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteV2WorkspaceBlocklistAddressesByAddressResponses,
+    DeleteV2WorkspaceBlocklistAddressesByAddressErrors,
+    ThrowOnError
+  >({
+    security: [{ scheme: "bearer", type: "http" }],
+    url: "/v2/workspace_blocklist_addresses/{address}",
+    ...options,
+  });
+
+/**
  * List meetings
  *
  * Lists all meetings in the workspace using a deterministic sort order. When both the `participants` and `linked_record_id` filters are supplied, they are combined with OR: meetings that match either filter are returned.
@@ -2531,7 +2654,7 @@ export const getV2MeetingsByMeetingIdCallRecordings = <ThrowOnError extends bool
  *
  * Create a call recording for a meeting. This endpoint is rate limited to 1 request per second.
  *
- * A `transcript` should always be provided — it is technically optional for backwards compatibility, but a call recording created without one will be missing summaries and other transcript-derived features. `video_url` is optional, and a transcript-only call recording (with no video) is fully supported.
+ * A `transcript` is required. `video_url` is optional, and a transcript-only call recording (with no video) is fully supported.
  *
  * This endpoint is in beta. We will aim to avoid breaking changes, but small updates may be made as we roll out to more users.
  *
