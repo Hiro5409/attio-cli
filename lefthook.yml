@@ -6,8 +6,8 @@ pre-commit:
   jobs:
     - name: staged
       run: mise exec -- vp staged
-    - name: gitleaks
-      run: mise exec -- gitleaks git --pre-commit --staged --no-banner --redact
+    - name: betterleaks
+      run: mise exec -- betterleaks git --pre-commit --staged --no-banner --redact
 
 pre-push:
   jobs:

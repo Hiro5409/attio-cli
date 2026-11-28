@@ -85,13 +85,13 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Set up Gitleaks
+      - name: Set up Betterleaks
         uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
         with:
           cache: ${{ github.ref_type != 'tag' }}
-          install_args: gitleaks
+          install_args: betterleaks
       - name: Scan git history for secrets
-        run: gitleaks git --no-banner --redact
+        run: betterleaks git --no-banner --redact
 
   workflows:
     runs-on: ubuntu-latest
